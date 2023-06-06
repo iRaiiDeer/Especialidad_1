@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmación de Envío de Correo</title>
+</head>
+<body>
+    <h2>Correo Enviado Exitosamente</h2>
+    {% if cotizacion %}
+        <p>Se ha enviado el correo de la cotización con ID: {{ cotizacion.id }}.</p>
+    {% elif ordencompra %}
+        <p>Se ha enviado el correo de la orden de compra con ID: {{ ordencompra.id }}.</p>
+    {% endif %}
+    <p><a href="/">Volver al inicio</a></p>
+</body>
+</html>

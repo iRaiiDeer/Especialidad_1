@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Informe de Gestión de Clientes</title>
+</head>
+<body>
+    <h1>Informe de Gestión de Clientes</h1>
+    
+    <h2>Datos de los clientes:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <!-- Agrega aquí otras columnas según tus necesidades -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.nombre1 }}</td>
+                <td>{{ cliente.email }}</td>
+                <!-- Agrega aquí otras columnas según tus necesidades -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Agrega aquí otros elementos del informe -->
+</body>
+</html>

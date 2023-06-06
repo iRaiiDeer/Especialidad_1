@@ -1,0 +1,67 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión Productos y Categorías</title>
+    <style>
+        body {
+            font-family: sans-serif; 
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            margin-top: 2rem;
+            margin-bottom: 10rem; /* Agregar margen inferior al título */
+            text-align: center;
+        }
+
+        .card {
+            width: 80%;
+            margin-top: 2rem;
+        }
+
+        .return-button {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        /* Estilos para los botones */
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 0.25rem;
+        }
+
+        .btn-dark {
+            background-color: #343a40;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title text-blue">GESTIÓN PRODUCTOS Y CATEGORÍAS</h1>
+    <div class="container">
+        <a href="{% url 'listar_producto' %}" class="btn btn-dark">Listado Productos</a>
+        <a href="{% url 'agregar_producto' %}" class="btn btn-dark">Nuevo Producto</a>
+        <a href="{% url 'ejemplos_carga_masiva' %}" class="btn btn-dark">Carga masiva de Producto</a>
+        <a href="{% url 'listar_categoria' %}" class="btn btn-dark">Listado Categoría</a>
+        <a href="{% url 'agregar_categoria' %}" class="btn btn-dark">Nuevo Categoría</a>
+        <a href="{% url 'carga_masiva_categoria' %}" class="btn btn-dark">Carga masiva de Categoría</a>
+        <div class="return-button">
+            <a href="{% url 'admin_main' %}" class="btn">Volver</a>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

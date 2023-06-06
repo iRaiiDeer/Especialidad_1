@@ -1,0 +1,133 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .title {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            margin-right: 0.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 0.25rem;
+        }
+
+        .btn-dark {
+            background-color: #343a40;
+        }
+
+        .table {
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.5rem;
+        }
+
+        .table th {
+            text-align: left;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .button-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .button-container a {
+            margin-right: 0.5rem;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-container .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+    </style>
+    <div class="col-12 col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="title">NUEVO PRODUCTO</h2>
+                <hr>
+                <div class="form-container">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {{ form }}
+                        <div class="btn-container">
+                            <input type="submit" value="Guardar" class="btn btn-primary">
+                            {% if messages %}
+                                {% for me in messages %}
+                                    <script>
+                                        Swal.fire({
+                                            "title": "ATENCION",
+                                            "text": "{{me}}",
+                                            "icon": "success",
+                                        })
+                                    </script>
+                                {% endfor %}
+                            {% endif %}
+                            <a href="{% url 'ejemplos_main' %}" class="btn btn-danger">Volver</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if messages %}
+    {% for me in messages %}
+        <script>
+            Swal.fire({
+                "title": "ATENCION",
+                "text": "{{me}}",
+                "icon": "success",
+            })
+        </script>
+    {% endfor %}
+{% endif %}
+
+
+{% endblock %}

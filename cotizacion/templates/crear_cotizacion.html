@@ -1,0 +1,77 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Cotizacion</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            width: 300px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .form-container label,
+        .form-container input,
+        .form-container select,
+        .form-container textarea {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .form-container input[type="submit"] {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cotizacion</h1>
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+                <label for="cliente">Cliente:</label>
+                <select name="cliente" required>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente.id }}">{{ cliente.nombre1 }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <label for="producto">Producto:</label>
+                <select name="producto" required>
+                    {% for producto in productos %}
+                    <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" name="cantidad" value="1" required>
+                <br><br>
+                <label for="descripcion">Descripción:</label>
+                <textarea name="descripcion" required></textarea>
+                <br><br>
+                <input type="submit" value="Crear Cotizacion">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

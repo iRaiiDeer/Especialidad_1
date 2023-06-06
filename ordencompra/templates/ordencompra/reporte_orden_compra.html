@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Informe de Orden de Compra</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Informe de Orden de Compra</h1>
+
+    <h2>Detalles de la Orden de Compra</h2>
+    <table>
+        <tr>
+            <th>Proveedor</th>
+            <td>{{ orden_compra.proveedor }}</td>
+        </tr>
+        <tr>
+            <th>Fecha de Creación</th>
+            <td>{{ orden_compra.fecha_creacion }}</td>
+        </tr>
+        <!-- Agregar más detalles de la orden de compra según sea necesario -->
+    </table>
+
+    <h2>Items de la Orden de Compra</h2>
+    <table>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+        {% for item in orden_compra.items.all %}
+        <tr>
+            <td>{{ item.producto.nombre }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>{{ item.subtotal }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

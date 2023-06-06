@@ -1,0 +1,60 @@
+{% block content %}
+  <h2>Crear Orden de Compra</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label for="proveedor">Proveedor:</label>
+    <select id="proveedor" name="proveedor">
+      {% for proveedor in proveedores %}
+        <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+      {% endfor %}
+    </select>
+    <br><br>
+    <table id="detalle-table">
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Subtotal</th>
+      </tr>
+      <tr>
+        <td>
+          <select name="producto">
+            {% for producto in productos %}
+              <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td><input type="number" name="cantidad"></td>
+        <td><input type="number" name="subtotal"></td>
+      </tr>
+    </table>
+    <br>
+    <button type="button" id="agregar-producto">Agregar Producto</button>
+    <br><br>
+    <input type="submit" value="Crear Orden de Compra">
+  </form>
+
+  <script>
+    document.getElementById("agregar-producto").addEventListener("click", function() {
+      var formsetTable = document.getElementById("detalle-table");
+      var newRow = formsetTable.insertRow(-1);
+
+      var productoCell = newRow.insertCell(0);
+      var productoInput = document.createElement("select");
+      productoInput.name = "producto";
+      productoInput.innerHTML = document.querySelector("#detalle-table tr:last-child select[name=producto]").innerHTML;
+      productoCell.appendChild(productoInput);
+
+      var cantidadCell = newRow.insertCell(1);
+      var cantidadInput = document.createElement("input");
+      cantidadInput.type = "number";
+      cantidadInput.name = "cantidad";
+      cantidadCell.appendChild(cantidadInput);
+
+      var subtotalCell = newRow.insertCell(2);
+      var subtotalInput = document.createElement("input");
+      subtotalInput.type = "number";
+      subtotalInput.name = "subtotal";
+      subtotalCell.appendChild(subtotalInput);
+    });
+  </script>
+{% endblock %}

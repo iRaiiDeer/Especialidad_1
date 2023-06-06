@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agregar Item</title>
+</head>
+<body>
+    <h1>Agregar Item</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="producto">Producto:</label>
+        <select name="producto" required>
+            {% for producto in productos %}
+                <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" value="1" required>
+        <br><br>
+        <input type="submit" value="Agregar Item">
+    </form>
+    <br>
+    <a href="{% url 'ver_venta' venta_id=venta.id %}">Volver a la venta</a>
+    <br><br>
+    <h2>Items de la Venta</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in venta.items.all %}
+                <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>{{ item.subtotal }}</td>
+                    <td><a href="{% url 'eliminar_item' venta_id=venta.id item_id=item.id %}">Eliminar</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

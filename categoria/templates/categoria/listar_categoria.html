@@ -1,0 +1,145 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+{% load humanize%}
+
+<style>
+    .search-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px 0 0 4px;
+    }
+
+    .search-input.custom-width {
+        width: 200px; /* Modifica este valor para ajustar el ancho */
+    }
+
+    .search-button {
+        padding: 13px 16px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+    }
+
+    .search-button:hover {
+        background-color: #0056b3;
+    }
+
+    .clear-button {
+        position: absolute;
+        top: 50%;
+        right: 50px;
+        transform: translateY(-50%);
+        background-color: transparent;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        display: none;
+    }
+
+    .clear-button:hover {
+        color: #777;
+    }
+
+    .product-list {
+        margin-top: 20px;
+    }
+
+    .report-button {
+        margin-left: 10px;
+    }
+    
+    .narrower-button {
+        width: 150px; /* Ajusta este valor según tus necesidades */
+    }
+</style>
+
+<div class="card">
+    <div class="card body">
+        <h2>LISTADO DE CATEGORIAS</h2>
+            <form method="GET">
+                <div class="search-container">
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" class="search-input custom-width form-control" placeholder="Buscar..." name="buscar" value="{{ buscar }}">
+                    <button class="search-button btn" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="clear-button" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="text-end">
+            <form method="GET" action="{% url 'generar_reporte_cat' %}" target="_blank">
+                <input type="hidden" name="buscar" value="{{ buscar }}">
+                <button type="submit" class="btn btn-primary report-button narrower-button">Generar PDF</button>
+            </form>
+        </div>
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>Nombre</th>
+            </tr>
+            {% for c in categorias %}
+            <tr>
+                <td>{{c.nombre | title}}</td>
+                <td>
+                    <a href="{% url 'modificar_categoria' c.id %}" class="btn btn-success">Modificar</a>
+                    <a href="{% url 'eliminar_categoria' c.id %}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+        <div class="row">
+            <div class="col-12 col-sm-12">
+                <a href="{% url 'ejemplos_main' %}" class="btn btn-danger form-control">Volver</a>
+            </div>
+        </div>
+        {% if messages %}
+        {% for me in messages %}
+        <script>
+            Swal.fire({
+                "title": "ATENCION",
+                "text": "{{me}}",
+                "icon": "success",
+            })
+        </script>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/b408879b64.js" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.querySelector('.search-input');
+        const clearButton = document.querySelector('.clear-button');
+
+        if (searchInput.value === "None") {
+            searchInput.value = "";
+        }
+
+        searchInput.addEventListener('input', function () {
+            clearButton.style.display = this.value ? 'block' : 'none';
+        });
+
+        clearButton.addEventListener('click', function () {
+            searchInput.value = '';
+            clearButton.style.display = 'none';
+            // Aquí redirige al mismo listado sin parámetros de búsqueda para mostrar todos los productos nuevamente
+            window.location.href = "{% url 'listar_proveedor' %}";
+        });
+    });
+</script>
+{% endblock %}

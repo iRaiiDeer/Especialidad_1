@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Venta</title>
+</head>
+<body>
+    <h1>Crear Venta</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="cliente">Cliente:</label>
+        <select name="cliente" required>
+            {% for cliente in clientes %}
+            <option value="{{ cliente.id }}">{{ cliente.nombre1 }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        {% for producto in productos %}
+            <label for="cantidad_{{ producto.id }}">{{ producto.nombre }}:</label>
+            <input type="number" name="cantidad_{{ producto.id }}" min="0" max="{{ producto.stock }}" value="0">
+            <br><br>
+        {% endfor %}
+        <input type="submit" value="Crear Venta">
+    </form>
+</body>
+</html>

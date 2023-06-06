@@ -1,0 +1,227 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="{% static 'administrator/css/styles.css' %}">
+
+    <!----===== Boxicons CSS ===== -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+<body>
+    <nav class="sidebar close">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="{% static 'administrator/img/logoo.png' %}" alt="Logo de la empresa" height="40">
+                </span>
+                <div class="text ">
+                    <span class="profession">Panel</span>
+                </div>
+            </div>
+            <i class='toggle'></i>
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="dropdown" id="menu">
+                    <li class="nav-link">
+                        <a href="{% url 'admin_main' %}">
+                            <i class='bx bx-home-alt icon'></i>
+                            <span class="text nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="dropdown__list">
+                        <a href="#" class="dropdown__link">
+                            <i class='bx bx-bar-chart-alt-2 icon'></i>
+                            <span class="text nav-text dropdown__span">Usuario</span>
+                            <span class="dropdown__arrow bx bx-chevron-down"></span> <!-- Agrega la flecha para indicar el despliegue -->
+                            <input type="checkbox" class="dropdown__check">
+                        </a>
+                        <div class="dropdown__content">
+                            <ul class="dropdown__sub">
+                                <li class="dropdown__li">
+                                    <a href="{% url 'new_user' %}" class="text nav-text dropdown__anchor">Crear usuario</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="#" class="text nav-text dropdown__anchor">Listado de Usuarios </a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="{% url 'masiva_usuarios' %}" class="text nav-text dropdown__anchor">Carga Masiva de usuarios</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown__list">
+                        <a href="#" class="dropdown__link">
+                            <i class='bx bx-folder icon'></i>
+                            <span class="text nav-text dropdown__span">Categorías</span>
+                            <span class="dropdown__arrow bx bx-chevron-down"></span> <!-- Agrega la flecha para indicar el despliegue -->
+                            <input type="checkbox" class="dropdown__check">
+                        </a>
+                        <div class="dropdown__content">
+                            <ul class="dropdown__sub">
+                                <li class="dropdown__li">
+                                    <a href="{% url 'agregar_categoria' %}" class="text nav-text dropdown__anchor">Crear Categoría</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="{% url 'listar_categoria' %}" class="text nav-text dropdown__anchor">Listado de Categorías</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="{% url 'carga_masiva_categoria' %}" class="text nav-text dropdown__anchor">Carga Masiva de Categorías</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown__list">
+                        <a href="#" class="dropdown__link">
+                            <i class='bx bx-cube icon'></i>
+                            <span class="text nav-text dropdown__span">Productos</span>
+                            <span class="dropdown__arrow bx bx-chevron-down"></span> <!-- Agrega la flecha para indicar el despliegue -->
+                            <input type="checkbox" class="dropdown__check">
+                        </a>
+                        <div class="dropdown__content">
+                            <ul class="dropdown__sub">
+                                <li class="dropdown__li">
+                                    <a href="{% url 'agregar_producto' %}" class="text nav-text dropdown__anchor">Crear Producto</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="{% url 'listar_producto' %}" class="text nav-text dropdown__anchor">Lista de productos</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="{% url 'ejemplos_carga_masiva' %}" class="text nav-text dropdown__anchor">Carga masiva</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown__list">
+                        <a href="#" class="dropdown__link">
+                            <i class='bx bx-building-house icon'></i>
+                            <span class="text nav-text dropdown__span">Proveedores</span>
+                            <span class="dropdown__arrow bx bx-chevron-down"></span> <!-- Agrega la flecha para indicar el despliegue -->
+                            <input type="checkbox" class="dropdown__check">
+                        </a>
+                        <div class="dropdown__content">
+                            <ul class="dropdown__sub">
+                                <li class="text nav-text dropdown__li">
+                                    <a href="{% url 'agregar_proveedor' %}" class="text nav-text text nav-text dropdown__anchor">Crear proveedor</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="{% url 'listar_proveedor' %}" class="text nav-text dropdown__anchor">Lista de proveedores</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="#" class="text nav-text dropdown__anchor">Carga masiva proveedores</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown__list">
+                        <a href="#" class="dropdown__link">
+                            <i class='bx bx-user icon'></i>
+                            <span class="text nav-text dropdown__span">Clientes</span>
+                            <span class="dropdown__arrow bx bx-chevron-down"></span> <!-- Agrega la flecha para indicar el despliegue -->
+                            <input type="checkbox" class="dropdown__check">
+                        </a>
+                        <div class="dropdown__content">
+                            <ul class="dropdown__sub">
+                                <li class="dropdown__li">
+                                    <a href="z" class="text nav-text dropdown__anchor">Crear cliente</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="#" class="text nav-text dropdown__anchor">Lista de clientes</a>
+                                </li>
+                                <li class="dropdown__li">
+                                    <a href="#" class="text nav-text dropdown__anchor">Carga masiva clientes</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+
+                    <li class="nav-link">
+                        <a href="{% url 'order_main' %}">
+                            <i class='bx bx-shopping-bag icon'></i>
+                            <span class="text nav-text">Gestion de Compra</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'cotizacion_main' %}">
+                            <i class='bx bx-file-blank icon'></i>
+                            <span class="text nav-text">Gestion de Cotizacion</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'venta_main' %}">
+                            <i class='bx bx-cart icon'></i>
+                            <span class="text nav-text">Gestion de Venta</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="bottom-content">
+                <li class="">
+                    <a href="#">
+                        <i class='bx bx-log-out icon'></i>
+                        <span class="text nav-text">Logout</span>
+                    </a>
+                </li>
+                <li class="mode">
+                    <div class="sun-moon">
+                        <i class='bx bx-moon icon moon'></i>
+                        <i class='bx bx-sun icon sun'></i>
+                    </div>
+                    <span class="mode-text text">Dark mode</span>
+                    <div class="toggle-switch">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+    <script>
+        const body = document.querySelector('body');
+        const sidebar = body.querySelector('nav.sidebar');
+        const toggle = body.querySelector('.toggle');
+        const dropdownLinks = body.querySelectorAll('.dropdown__link');
+        let activeDropdown = null; // Variable para almacenar el menú desplegable activo
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('close');
+        });
+        dropdownLinks.forEach(link => {
+            const checkbox = link.querySelector('.dropdown__check');
+            const content = link.nextElementSibling;
+            const arrow = link.querySelector('.dropdown__arrow');
+            checkbox.addEventListener('change', () => {
+            if (activeDropdown && activeDropdown !== content) {
+                activeDropdown.classList.remove('show');
+                activeDropdown.previousElementSibling.querySelector('.dropdown__arrow').classList.remove('bx-chevron-up');
+            }
+            if (checkbox.checked) {
+                content.classList.add('show');
+                arrow.classList.add('bx-chevron-up');
+                activeDropdown = content;
+            } else {
+                content.classList.remove('show');
+                arrow.classList.remove('bx-chevron-up');
+                activeDropdown = null;
+            }
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+            var sidebar = document.querySelector(".sidebar");
+            sidebar.classList.remove("close");
+        });
+    </script>
+</body>
+</html>
+
+
+{% block content %}
+
+
+{% endblock %}

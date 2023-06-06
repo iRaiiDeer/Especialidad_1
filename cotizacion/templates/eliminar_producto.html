@@ -1,0 +1,25 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eliminar Producto</title>
+</head>
+<body>
+    <h1>Eliminar Producto</h1>
+    <p>Estás a punto de eliminar el siguiente producto de la cotización:</p>
+    <p>Cotización ID: {{ cotizacion.id }}</p>
+    <p>Producto ID: {{ producto.id }}</p>
+    <p>Nombre: {{ producto.nombre }}</p>
+    <p>Cantidad: {{ producto.cantidad }}</p>
+    
+    <p>¿Estás seguro de que deseas eliminar este producto?</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Eliminar">
+    </form>
+</body>
+</html>
+{% endblock %}

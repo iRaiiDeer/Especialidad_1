@@ -1,0 +1,9 @@
+
+{% block content %}
+  <h2>Eliminar Orden de Compra</h2>
+  <p>¿Estás seguro de que deseas eliminar la Orden de Compra #{{ orden_compra.id }}?</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="submit" value="Eliminar">
+  </form>
+{% endblock %}

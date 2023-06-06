@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ver Venta</title>
+</head>
+<body>
+    <h1>Detalles de la Venta</h1>
+    <p>ID de Venta: {{ venta.id }}</p>
+    <p>Fecha de Venta: {{ venta.fecha_venta }}</p>
+    <p>Cliente: {{ venta.cliente.nombre }}</p>
+    <h2>Items de la Venta</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in venta.items.all %}
+                <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>{{ item.subtotal }}</td>
+                    <td><a href="{% url 'eliminar_item' venta_id=venta.id item_id=item.id %}">Eliminar</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <a href="{% url 'agregar_item' venta_id=venta.id %}">Agregar Item</a>
+    <br><br>
+    <p>Total: {{ venta.total }}</p>
+    <br>
+    <a href="{% url 'listar_ventas' %}">Volver a la lista de ventas</a>
+</body>
+</html>

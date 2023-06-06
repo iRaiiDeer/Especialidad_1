@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agregar Item</title>
+</head>
+<body>
+    <h1>Agregar Item</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="producto">Producto:</label>
+        <select name="producto" required>
+            {% for producto in productos %}
+            <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" value="1" required>
+        <br><br>
+        <input type="submit" value="Agregar Item">
+    </form>
+    <br>
+    <a href="{% url 'ver_orden_compra' orden_id=orden.id %}">Volver a la orden de compra</a>
+</body>
+</html>

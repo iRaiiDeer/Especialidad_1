@@ -1,0 +1,91 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+{% load humanize%}
+<div class="card" style="margin-left: 200px;">
+    <div class="card-body">
+        <h2>LISTADO DE PRODUCTO</h2>
+        <form method="GET">
+            <div class="search-container">
+                <div style="display: flex; align-items: center;">
+                    <input type="text" class="search-input custom-width form-control" placeholder="Buscar..." name="buscar" value="{{ buscar }}">
+                    <button class="search-button btn" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="clear-button" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="text-end">
+            <form method="GET" action="{% url 'generar_reporte' %}" target="_blank">
+                <input type="hidden" name="buscar" value="{{ buscar }}">
+                <button type="submit" class="btn btn-primary report-button narrower-button">Generar PDF</button>
+            </form>
+        </div>
+        <table class="table table-striped table-hover product-list">
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Descripción</th>
+                <th>Talla</th>
+                <th>Categoría</th>
+                <th>Opciones</th>
+            </tr>
+
+            {% for p in productos %}
+            <tr>
+                <td>{{p.nombre | title}}</td>
+                <td>${{p.precio | intcomma}}</td>
+                <td>{{p.descripcion | title}}</td>
+                <td>{{p.talla | title}}</td>
+                <td>{{p.categoria | title}}</td>
+                <td>
+                    <a href="{% url 'actualizar_producto' p.id %}" class="btn btn-success">Modificar</a>
+                    <a href="{% url 'eliminar_producto' p.id %}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% if messages %}
+        {% for me in messages %}
+        <script>
+            Swal.fire({
+                "title": "ATENCION",
+                "text": "{{me}}",
+                "icon": "success",
+            })
+        </script>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/b408879b64.js" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.querySelector('.search-input');
+        const clearButton = document.querySelector('.clear-button');
+
+        if (searchInput.value === "None") {
+            searchInput.value = "";
+        }
+
+        searchInput.addEventListener('input', function () {
+            clearButton.style.display = this.value ? 'block' : 'none';
+        });
+
+        clearButton.addEventListener('click', function () {
+            searchInput.value = '';
+            clearButton.style.display = 'none';
+            // Aquí redirige al mismo listado sin parámetros de búsqueda para mostrar todos los productos nuevamente
+            window.location.href = "{% url 'listar_producto' %}";
+        });
+    });
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listar Órdenes de Compra</title>
+</head>
+<body>
+    <h1>Listar Órdenes de Compra</h1>
+    <ul>
+        <form action="{% url 'generar_reporte_oc' %}" method="get">
+            <div class="search-container">
+                <div style="display: flex; align-items: center;">
+                    <input type="text" class="search-input custom-width form-control" placeholder="Buscar por ID..." name="filtro_id" value="{{ filtro_id }}">
+                    <button class="search-button btn" type="submit">
+                        <i class="fas fa-file-pdf"></i> Generar informe
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <form method="POST" action="{% url 'enviar_correo_oc'%}">
+            {% csrf_token %}
+            <label for="filtro_id">ID de Cotización:</label>
+            <input type="number" id="filtro_id" name="filtro_id" required>
+            <button type="submit">Enviar Correo</button>
+        </form>
+
+
+        {% for orden in ordenes %}
+        <li>
+            <a href="{% url 'ver_orden_compra' orden_id=orden.id %}">Orden de compra {{ orden.id }}</a> - Proveedor: {{ orden.proveedor }}
+        </li>
+        {% empty %}
+        <li>No hay órdenes de compra.</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'crear_orden_compra' %}">Crear Orden de Compra</a>
+    <a href="{% url 'generar_reporte_oc'  %}" target="_blank">Generar Reporte Completo</a>
+</body>
+</html>

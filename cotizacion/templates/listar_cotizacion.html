@@ -1,0 +1,154 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listar Cotizaciones</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .title {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            margin-right: 0.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 0.25rem;
+        }
+
+        .btn-dark {
+            background-color: #343a40;
+        }
+
+        .table {
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.5rem;
+        }
+
+        .table th {
+            text-align: left;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .button-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .button-container a {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Listar Cotizaciones</h1>
+        
+        <form method="GET" action="{% url 'listar_cotizacion' %}">
+            <div class="search-container">
+                <input type="text" class="search-input custom-width form-control" placeholder="Buscar por nombre..." name="buscar" value="{{ buscar }}">
+                <button class="search-button btn" type="submit">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+    
+        <form action="{% url 'generar_reporte_cotizaciones' %}" method="get">
+            <div class="search-container">
+                <input type="text" class="search-input custom-width form-control" placeholder="Buscar por ID..." name="filtro_id" value="{{ filtro_id }}">
+                <button class="search-button btn" type="submit">
+                    <i class="fas fa-file-pdf"></i> Generar informe
+                </button>
+            </div>
+        </form>
+        <form method="POST" action="{% url 'enviar_correo_cotizacion'%}">
+            {% csrf_token %}
+            <label for="filtro_id">ID de Cotización:</label>
+            <input type="number" id="filtro_id" name="filtro_id" required>
+            <button type="submit">Enviar Correo</button>
+        </form>
+
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+            </tr>
+            {% for orden in ordenes %}
+            <tr>
+                <td><a href="{% url 'ver_cotizacion' orden_id=orden.id %}">Cotización {{ orden.id }}</a></td>
+                <td>{{ orden.cliente }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No hay Cotizaciones.</td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        <div class="button-container">
+            <a href="{% url 'crear_cotizacion' %}" class="btn">Crear Cotización</a>
+            <a href="{% url 'generar_reporte_cotizaciones' %}" target="_blank" class="btn btn-dark">Generar Reporte Completo</a>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/b408879b64.js" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.querySelector('.search-input');
+            const clearButton = document.querySelector('.clear-button');
+
+            if (searchInput.value === "None") {
+                searchInput.value = "";
+            }
+
+            searchInput.addEventListener('input', function () {
+                clearButton.style.display = this.value ? 'block' : 'none';
+            });
+
+            clearButton.addEventListener('click', function () {
+                searchInput.value = '';
+                clearButton.style.display = 'none';
+                window.location.href = "{% url 'listar_cotizacion' %}";
+            });
+        });
+    </script>
+</body>
+</html>
+
+{% endblock %} 

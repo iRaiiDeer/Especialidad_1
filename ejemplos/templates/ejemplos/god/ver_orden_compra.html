@@ -1,0 +1,20 @@
+{% block content %}
+  <h2>Orden de Compra</h2>
+  <p>Proveedor: {{ orden_compra.proveedor }}</p>
+  <p>Fecha: {{ orden_compra.fecha }}</p>
+  
+  <table>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Subtotal</th>
+    </tr>
+    {% for detalle in detalles %}
+      <tr>
+        <td>{{ detalle.producto }}</td>
+        <td>{{ detalle.cantidad }}</td>
+        <td>{{ detalle.subtotal }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

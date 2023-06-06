@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cotización</title>
+</head>
+<body>
+    <h1>Cotización</h1>
+    <p>Estimado(a) cliente,</p>
+    <p>A continuación, le adjuntamos la cotización solicitada:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cotizacion.items.all %}
+            <tr>
+                <td>{{ item.producto }}</td>
+                <td>{{ item.precio }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>Gracias por su preferencia.</p>
+</body>
+</html>

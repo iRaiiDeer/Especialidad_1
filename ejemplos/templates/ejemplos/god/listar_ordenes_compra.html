@@ -1,0 +1,10 @@
+{% block content %}
+  <h2>Listado de Órdenes de Compra</h2>
+  <ul>
+    {% for orden_compra in ordenes_compra %}
+      <li><a href="{% url 'ver_orden_compra' orden_compra.id %}">Orden de Compra #{{ orden_compra.id }}</a></li>
+    {% empty %}
+      <li>No hay órdenes de compra registradas</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

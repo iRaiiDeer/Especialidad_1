@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Orden de Compra</title>
+</head>
+<body>
+    <h1>Crear Orden de Compra</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="proveedor">Proveedor:</label>
+        <select name="proveedor" required>
+            {% for proveedor in proveedores %}
+            <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="producto">Producto:</label>
+        <select name="producto" required>
+            {% for producto in productos %}
+            <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" value="1" required>
+        <br><br>
+        <input type="submit" value="Crear Orden de Compra">
+    </form>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Informe de Cotizaciones</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Informe de Cotizaciones</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in orden.items.all %}
+            <tr>
+                <td>{{ cotizacion.producto.nombre }}</td>
+                <td>{{ cotizacion.descripcion  }}</td>
+                <td>{{ cotizacion.cantidad }}</td>
+                <td>{{ cotizacion.subtotal  }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
