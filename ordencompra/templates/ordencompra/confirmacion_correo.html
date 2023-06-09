@@ -2,14 +2,31 @@
 <html>
 <head>
     <title>Confirmación de Envío de Correo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #125aa2;
+        }
+    </style>
 </head>
 <body>
-    <h2>Correo Enviado Exitosamente</h2>
-    {% if cotizacion %}
-        <p>Se ha enviado el correo de la cotización con ID: {{ cotizacion.id }}.</p>
-    {% elif ordencompra %}
-        <p>Se ha enviado el correo de la orden de compra con ID: {{ ordencompra.id }}.</p>
-    {% endif %}
-    <p><a href="/">Volver al inicio</a></p>
+    <div class="container text-center">
+        <h2>Correo Enviado Exitosamente</h2>
+        {% if cotizacion %}
+            <p>Se ha enviado el correo de la cotización con ID: {{ cotizacion.id }}.</p>
+        {% elif ordencompra %}
+            <p>Se ha enviado el correo de la orden de compra con ID: {{ ordencompra.id }}.</p>
+        {% endif %}
+        <p><a href="/" class="btn btn-primary">Volver al inicio</a></p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
 </html>
+

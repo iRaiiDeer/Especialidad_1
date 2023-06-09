@@ -1,40 +1,171 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Listar Órdenes de Compra</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            padding: 50px;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h1 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333333;
+            text-align: center;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            height: 40px;
+        }
+
+        .btn-pdf,
+        .btn-primary {
+            padding: 5px 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out;
+            margin-left: 10px;
+        }
+        
+
+        .btn-pdf i {
+            margin-right: 5px;
+        }
+
+        .btn-pdf {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-primary1 {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            margin-right: 300px;
+        }
+
+        .btn-pdf:hover,
+        .btn-primary:hover,
+        .btn-primary1:hover {
+            background-color: #0056b3;
+        }
+
+        .list-container {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            margin-bottom: 30px;
+        }
+
+        .list-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .list-item a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .list-item span {
+            color: #666666;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .actions a {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .actions a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Listar Órdenes de Compra</h1>
-    <ul>
-        <form action="{% url 'generar_reporte_oc' %}" method="get">
-            <div class="search-container">
-                <div style="display: flex; align-items: center;">
-                    <input type="text" class="search-input custom-width form-control" placeholder="Buscar por ID..." name="filtro_id" value="{{ filtro_id }}">
-                    <button class="search-button btn" type="submit">
+    <div class="container">
+        <h1>Listar Órdenes de Compra</h1>
+
+        <form action="{% url 'generar_reporte_oc' %}" method="get" class="search-container">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar por ID..." name="filtro_id" value="{% if filtro_id %}{{ filtro_id }}{% endif %}">
+                <div class="input-group-append">
+                    <button class="btn btn-pdf" type="submit">
                         <i class="fas fa-file-pdf"></i> Generar informe
                     </button>
                 </div>
             </div>
         </form>
 
-        <form method="POST" action="{% url 'enviar_correo_oc'%}">
+        <form method="POST" action="{% url 'enviar_correo_oc'%}" class="search-container">
             {% csrf_token %}
-            <label for="filtro_id">ID de Cotización:</label>
-            <input type="number" id="filtro_id" name="filtro_id" required>
-            <button type="submit">Enviar Correo</button>
+            <div class="input-group">
+                <input type="number" id="filtro_id" name="filtro_id" required class="form-control" placeholder="ID de Órdenes de Compra...">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-envelope"></i> Enviar Correo
+                    </button>
+                </div>
+            </div>
         </form>
 
+        <ul class="list-container">
+            {% for orden in ordenes %}
+            <li class="list-item">
+                <i class="fas fa-search"></i>
+                <a href="{% url 'ver_orden_compra' orden_id=orden.id %}">Orden de Compra {{ orden.id }}</a> - <span>Proveedor: {{ orden.proveedor.empresa }}</span>
+            </li>
+            {% empty %}
+            <li class="list-item">No hay órdenes de compra.</li>
+            {% endfor %}
+        </ul>
 
-        {% for orden in ordenes %}
-        <li>
-            <a href="{% url 'ver_orden_compra' orden_id=orden.id %}">Orden de compra {{ orden.id }}</a> - Proveedor: {{ orden.proveedor }}
-        </li>
-        {% empty %}
-        <li>No hay órdenes de compra.</li>
-        {% endfor %}
-    </ul>
-    <br>
-    <a href="{% url 'crear_orden_compra' %}">Crear Orden de Compra</a>
-    <a href="{% url 'generar_reporte_oc'  %}" target="_blank">Generar Reporte Completo</a>
+        <div class="actions">
+            <a href="{% url 'crear_orden_compra' %}" class="btn btn-primary1">Crear Orden de Compra</a>
+        </div>
+    </div>
 </body>
 </html>
+{% endblock %}

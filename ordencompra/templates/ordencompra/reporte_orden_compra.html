@@ -2,9 +2,12 @@
 <html>
 <head>
     <title>Informe de Orden de Compra</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa; /* Color de fondo */
         }
         h1 {
             font-size: 24px;
@@ -26,38 +29,60 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+        .selected {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
-    <h1>Informe de Orden de Compra</h1>
+    <div class="container">
+        <h1>Informe de Orden de Compra</h1>
 
-    <h2>Detalles de la Orden de Compra</h2>
-    <table>
-        <tr>
-            <th>Proveedor</th>
-            <td>{{ orden_compra.proveedor }}</td>
-        </tr>
-        <tr>
-            <th>Fecha de Creación</th>
-            <td>{{ orden_compra.fecha_creacion }}</td>
-        </tr>
-        <!-- Agregar más detalles de la orden de compra según sea necesario -->
-    </table>
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Detalles de la Orden de Compra</h2>
+                <table class="table">
+                    <tr>
+                        <th>Proveedor</th>
+                        <td>{{ orden_compra.proveedor }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Creación</th>
+                        <td>{{ orden_compra.fecha_creacion }}</td>
+                    </tr>
+                    <!-- Agregar más detalles de la orden de compra según sea necesario -->
+                </table>
+                <a href="#" class="btn btn-primary">Volver</a>
+            </div>
 
-    <h2>Items de la Orden de Compra</h2>
-    <table>
-        <tr>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-        </tr>
-        {% for item in orden_compra.items.all %}
-        <tr>
-            <td>{{ item.producto.nombre }}</td>
-            <td>{{ item.cantidad }}</td>
-            <td>{{ item.subtotal }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+            <div class="col-md-6">
+                <h2>Items de la Orden de Compra</h2>
+                <table class="table table-striped" id="itemsTable">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    {% for item in orden_compra.items.all %}
+                    <tr onclick="highlightRow(this)">
+                        <td>{{ item.producto.nombre }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>{{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function highlightRow(row) {
+            var rows = document.querySelectorAll("#itemsTable tr");
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].classList.remove("selected");
+            }
+            row.classList.add("selected");
+        }
+    </script>
 </body>
 </html>

@@ -1,25 +1,82 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Agregar Item</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5; /* Color de fondo */
+        }
+
+        .container {
+            width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group select,
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn-container {
+            text-align: center;
+        }
+
+        .btn-container a {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Agregar Item</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="producto">Producto:</label>
-        <select name="producto" required>
-            {% for producto in productos %}
-            <option value="{{ producto.id }}">{{ producto.nombre }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
-        <label for="cantidad">Cantidad:</label>
-        <input type="number" name="cantidad" value="1" required>
-        <br><br>
-        <input type="submit" value="Agregar Item">
-    </form>
-    <br>
-    <a href="{% url 'ver_orden_compra' orden_id=orden.id %}">Volver a la orden de compra</a>
+    <div class="container">
+        <h1>Agregar Item</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="producto">Producto:</label>
+                <select name="producto" required class="form-control">
+                    {% for producto in productos %}
+                    <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" name="cantidad" value="1" required class="form-control">
+            </div>
+            <div class="btn-container">
+                <input type="submit" value="Agregar Item" class="btn btn-primary">
+                <a href="{% url 'ver_orden_compra' orden_id=orden.id %}" class="btn btn-secondary">Volver a la orden de compra</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
+{% endblock %}

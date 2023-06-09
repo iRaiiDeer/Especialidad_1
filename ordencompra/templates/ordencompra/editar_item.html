@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Item</title>
+</head>
+<body>
+    <h1>Editar Item</h1>
+    <form method="post" action="{% url 'editar_item' item_id=item.id %}">
+        {% csrf_token %}
+        <label for="producto">Producto:</label>
+        <select name="producto" id="producto">
+            {% for producto in productos %}
+                <option value="{{ producto.id }}" {% if item.producto.id == producto.id %}selected{% endif %}>{{ producto.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" id="cantidad" value="{{ item.cantidad }}">
+        <br>
+        <input type="submit" value="Guardar">
+    </form>
+</body>
+</html>
