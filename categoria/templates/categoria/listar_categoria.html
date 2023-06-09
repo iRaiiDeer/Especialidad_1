@@ -1,130 +1,158 @@
 {% extends "administrator/index_main.html" %}
 {% load static %}
 {% block content %}
-{% load humanize%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listado de Categorías</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+            padding: 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            margin-left: 600px;
+            width: 100%;
+            max-width: 700px;
+        }
+        .input-group{
+            width: 300px;
+        }
+        .btn-pdf{
+            margin-top: -96px;
 
-<style>
-    .search-container {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        margin-bottom: 20px;
-        position: relative;
-    }
+        }
 
-    .search-input {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px 0 0 4px;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e5ecf3;
+        }
+        .btn-morado {
+            background-color: #d10707;
+            border-color: #d10707;
+            color: #fff;
+        }
 
-    .search-input.custom-width {
-        width: 200px; /* Modifica este valor para ajustar el ancho */
-    }
+        .btn-morado:hover {
+            background-color: #d10707;
+            border-color: #d10707;
+            color: #fff;
+        }
 
-    .search-button {
-        padding: 13px 16px;
-        border: none;
-        background-color: #007bff;
-        color: #fff;
-        border-radius: 0 4px 4px 0;
-        cursor: pointer;
-    }
+        .btn-azul {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
 
-    .search-button:hover {
-        background-color: #0056b3;
-    }
+        .btn-azul:hover {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
 
-    .clear-button {
-        position: absolute;
-        top: 50%;
-        right: 50px;
-        transform: translateY(-50%);
-        background-color: transparent;
-        border: none;
-        color: #999;
-        cursor: pointer;
-        display: none;
-    }
+        .btn-morado-pdf {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            color: #fff;
+        }
 
-    .clear-button:hover {
-        color: #777;
-    }
+        .btn-morado-pdf:hover {
+            background-color: #d10707;
+            border-color: #d10707;
+            color: #fff;
+        }
 
-    .product-list {
-        margin-top: 20px;
-    }
+        .cat-list th {
 
-    .report-button {
-        margin-left: 10px;
-    }
-    
-    .narrower-button {
-        width: 150px; /* Ajusta este valor según tus necesidades */
-    }
-</style>
+        margin-left: 800px;
+        }
 
-<div class="card">
-    <div class="card body">
-        <h2>LISTADO DE CATEGORIAS</h2>
+        .cat-list td {
+            vertical-align: middle;
+            margin-left: 50px;
+        }
+        .btn-volver{
+            width: 100px;
+            margin-left: 250px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="text-center mb-4">LISTADO DE CATEGORIAS</h2>
             <form method="GET">
-                <div class="search-container">
-                    <div style="display: flex; align-items: center;">
-                        <input type="text" class="search-input custom-width form-control" placeholder="Buscar..." name="buscar" value="{{ buscar }}">
-                    <button class="search-button btn" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <button class="clear-button" type="button">
-                        <i class="fas fa-times"></i>
-                    </button>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar..." name="buscar" value="{{ buscar }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="btn btn-primary" type="button" id="clearButton">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="text-end mb-3">
+                <form method="GET" action="{% url 'generar_reporte_cat' %}" target="_blank">
+                    <input type="hidden" name="buscar" value="{{ buscar }}">
+                    <button type="submit" class="btn btn-primary btn-pdf">Generar PDF</button>
+                </form>
+            </div>
+            <table class="table table-striped table-hover cat-list">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in categorias %}
+                    <tr>
+                        <td>{{c.nombre | title}}</td>
+                        <td>
+                            <a href="{% url 'modificar_categoria' c.id %}" class="btn btn-azul">Modificar</a>
+                            <a href="{% url 'eliminar_categoria' c.id %}" class="btn btn-morado">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-12 col-sm-12">
+                    <a href="{% url 'admin_main' %}" class="btn btn-morado form-control btn-volver">Volver</a>
                 </div>
             </div>
-        </form>
-        <div class="text-end">
-            <form method="GET" action="{% url 'generar_reporte_cat' %}" target="_blank">
-                <input type="hidden" name="buscar" value="{{ buscar }}">
-                <button type="submit" class="btn btn-primary report-button narrower-button">Generar PDF</button>
-            </form>
-        </div>
-        <table class="table table-striped table-hover">
-            <tr>
-                <th>Nombre</th>
-            </tr>
-            {% for c in categorias %}
-            <tr>
-                <td>{{c.nombre | title}}</td>
-                <td>
-                    <a href="{% url 'modificar_categoria' c.id %}" class="btn btn-success">Modificar</a>
-                    <a href="{% url 'eliminar_categoria' c.id %}" class="btn btn-danger">Eliminar</a>
-                </td>
-            </tr>
+            {% if messages %}
+            {% for me in messages %}
+            <script>
+                Swal.fire({
+                    "title": "ATENCION",
+                    "text": "{{me}}",
+                    "icon": "success",
+                })
+            </script>
             {% endfor %}
-
-        </table>
-        <div class="row">
-            <div class="col-12 col-sm-12">
-                <a href="{% url 'ejemplos_main' %}" class="btn btn-danger form-control">Volver</a>
-            </div>
+            {% endif %}
         </div>
-        {% if messages %}
-        {% for me in messages %}
-        <script>
-            Swal.fire({
-                "title": "ATENCION",
-                "text": "{{me}}",
-                "icon": "success",
-            })
-        </script>
-        {% endfor %}
-        {% endif %}
     </div>
 </div>
 
 <script src="https://kit.fontawesome.com/b408879b64.js" crossorigin="anonymous"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.querySelector('.search-input');
-        const clearButton = document.querySelector('.clear-button');
+        const searchInput = document.querySelector('input[name="buscar"]');
+        const clearButton = document.querySelector('#clearButton');
 
         if (searchInput.value === "None") {
             searchInput.value = "";
@@ -138,8 +166,11 @@
             searchInput.value = '';
             clearButton.style.display = 'none';
             // Aquí redirige al mismo listado sin parámetros de búsqueda para mostrar todos los productos nuevamente
-            window.location.href = "{% url 'listar_proveedor' %}";
+            window.location.href = "{% url 'listar_categoria' %}";
         });
     });
 </script>
+
+</body>
+</html>
 {% endblock %}

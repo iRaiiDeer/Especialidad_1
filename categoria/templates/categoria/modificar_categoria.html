@@ -3,33 +3,110 @@
 {% block content %}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-<div class="row">
-    <div class="col-12 col-md-6 offset-md-3">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e5ecf3;
+    }
+
+    .container {
+        margin-left: 700px;
+        margin-top: 210px;
+        width: 100%;
+        max-width: 600px;
+        padding: 40px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+
+    h2 {
+        text-align: center;
+        margin-bottom: 50px;
+        color: #333;
+    }
+
+    form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-primary,
+    .btn-danger {
+        width: 100%;
+        padding: 5px 10px;
+        font-size: 14px;
+        text-transform: uppercase;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        margin-top: 40px;
+        margin-right: 30px;
+        margin-left: 30px;
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #007bff;
+    }
+
+    .btn-danger {
+        margin-top: 40px;
+        margin-right: 30px;
+        margin-left: 30px;
+        background-color: #d10707;;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-danger:hover {
+        background-color: #d10707;;
+    }
+
+    .volver-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .volver-container a {
+        width: 100%;
+        text-align: center;
+    }
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+</style>
+
+<div class="container">
         <div class="card">
             <div class="card-body">
-                <h2>EDITAR CATEGORIA</h2>
-                <hr>
-
-
+                <h2>EDITAR CATEGORÍA</h2>
                 <form action="" method="post">
                     {% csrf_token %}
-                    {{ form }}
-                    <div class="d-flex justify-content-center">
-
-                        <input type="reset" value="Cancelar" class="btn btn-secondary">
-                        <input type="submit" value="Editar" class="btn btn-primary">
-
-
+                    <div class="form-group">
+                        <label for="id_nombre">Nombre:</label>
+                        {{ form }}
                     </div>
-
+                    <div class="button-container">
+                        <a href="{% url 'listar_categoria' %}" class="btn btn-danger me-2" style="background-color: rgb(215, 8, 8);">Cancelar</a>
+                        <input type="submit" value="Editar" class="btn btn-primary">
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-
-
-
 
 {% endblock %}

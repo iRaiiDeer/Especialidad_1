@@ -1,40 +1,125 @@
 {% extends "administrator/index_main.html" %}
 {% load static %}
 {% block content %}
-<div class="row">
-    <div class="col-12 col-md-6 offset-md-3">
-        <div class="card">
-            <div class="card-body">
-                <h2>NUEVA CATEGORÍA</h2>
-                <hr>
-                <form action="" method="post">
-                    {% csrf_token %}
-                    {{ form }}
-                    <div class="d-flex justify-content-center">
-                        <input type="submit" value="Guardar" class="btn btn-primary">
-                        <th colspan="1">
-                            <div class="row">
-                                <div class="col-12 col-sm-12">
-                                    <a href="{% url 'ejemplos_main' %}" class="btn btn-danger form-control">Volver</a>
-                                </div>
-                            </div>
-                        </th>
-                    </div>
-                </form>
-            </div>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e5ecf3;
+    }
+
+    .container {
+        margin-left: 650px;
+        margin-top: 210px;
+        width: 100%;
+        max-width: 600px;
+        padding: 40px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group{
+        padding: 10px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 50px;
+        color: #333;
+    }
+
+    form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-primary,
+    .btn-danger {
+        width: 100%;
+        padding: 5px 10px;
+        font-size: 14px;
+        text-transform: uppercase;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        margin-top: 40px;
+        margin-right: 30px;
+        margin-left: 30px;
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #007bff;
+    }
+
+    .btn-danger {
+        margin-top: 40px;
+        margin-right: 30px;
+        margin-left: 30px;
+        background-color: #d10707;;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-danger:hover {
+        background-color: #d10707;;
+    }
+
+    .volver-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .volver-container a {
+        width: 100%;
+        text-align: center;
+    }
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+</style>
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h2>NUEVA CATEGORÍA</h2>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    
+                    <label for="id_nombre">Nombre: &nbsp;  </label>
+                    {{ form.nombre }}
+                </div>
+                <div class="button-container">
+                    <input type="submit" value="Guardar" class="btn btn-primary">
+                    <a href="{% url 'ejemplos_main' %}" class="btn btn-danger">Volver</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 {% if messages %}
-{% for me in messages %}
-<script>
-    Swal.fire({
-        "title": "ATENCION",
-        "text": "{{me}}",
-        "icon": "success",
-    })
-</script>
-{% endfor %}
+    {% for me in messages %}
+        <script>
+            Swal.fire({
+                "title": "ATENCION",
+                "text": "{{me}}",
+                "icon": "success",
+            })
+        </script>
+    {% endfor %}
 {% endif %}
 
 {% endblock %}
