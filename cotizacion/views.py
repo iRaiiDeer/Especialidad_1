@@ -19,9 +19,45 @@ from django.core.mail import EmailMessage
 import tempfile
 import os
 import io
-
+import pandas as pd
+import plotly.graph_objects as go
 
 # Create your views here.
+def dashboard5(request):
+    cotizaciones = Cotizacion.objects.all()
+
+    # Datos útiles
+    total_cotizaciones = cotizaciones.count()
+    cotizaciones_recientes = cotizaciones.order_by('-fecha')[:5]
+    cotizaciones_clientes = [cotizacion.cliente.nombre1 for cotizacion in cotizaciones_recientes]
+
+    # Gráfico 1: Distribución de cotizaciones por cliente
+    clientes = [cotizacion.cliente.nombre1 for cotizacion in cotizaciones]
+    cliente_count = {}
+    for cliente in clientes:
+        if cliente in cliente_count:
+            cliente_count[cliente] += 1
+        else:
+            cliente_count[cliente] = 1
+
+    fig1 = go.Figure(data=[go.Pie(labels=list(cliente_count.keys()), values=list(cliente_count.values()))])
+    fig1.update_layout(title='Distribución de cotizaciones por cliente')
+
+    # Gráfico 2: Número de cotizaciones por mes
+    cotizaciones_df = pd.DataFrame(cotizaciones.values('fecha'))
+    cotizaciones_df['mes'] = cotizaciones_df['fecha'].dt.month_name()
+    cotizaciones_por_mes = cotizaciones_df['mes'].value_counts().sort_index()
+
+    fig2 = go.Figure(data=[go.Bar(x=cotizaciones_por_mes.index, y=cotizaciones_por_mes.values)])
+    fig2.update_layout(title='Número de cotizaciones por mes', xaxis_title='Mes', yaxis_title='Número de cotizaciones')
+
+    # Renderizar el dashboard
+    return render(request, 'dashboard_5.html', {
+        'total_cotizaciones': total_cotizaciones,
+        'cotizaciones_clientes': cotizaciones_clientes,
+        'fig1': fig1.to_html(full_html=False, default_height=500),
+        'fig2': fig2.to_html(full_html=False, default_height=500)
+    })
 
 
 def crear_cotizacion(request):
@@ -40,6 +76,7 @@ def crear_cotizacion(request):
         return redirect('ver_cotizacion', orden_id=orden_cotizacion.id)
     clientes = Cliente.objects.all() 
     productos = Producto.objects.all()
+    messages.add_message(request, messages.INFO, 'Se ha creado su cotización!')
     return render(request, 'crear_cotizacion.html', {'clientes': clientes, 'productos': productos})
 
 
@@ -51,6 +88,7 @@ def ver_cotizacion(request, orden_id):
 def eliminar_cotizacion(request, orden_id):
     orden = get_object_or_404(Cotizacion, id=orden_id)
     orden.delete()
+    messages.add_message(request, messages.INFO, 'Se ha eliminado su cotización!')
     return redirect('listar_cotizacion')
 
 def listar_cotizacion(request):
@@ -79,6 +117,7 @@ def ola(request, orden_id):
         producto = get_object_or_404(Producto, id=producto_id)
         print("XD")
         item = ItemCot.objects.create(orden_cotizacion=orden, producto=producto, cantidad=cantidad)
+        messages.add_message(request, messages.INFO, 'Se ha agregado producto a su cotización!')
         return redirect('ver_cotizacion', orden_id=orden.id)
     else:
         orden = get_object_or_404(Cotizacion, id=orden_id)
@@ -91,6 +130,7 @@ def eliminar(request, item_id):
     item = get_object_or_404(ItemCot, id=item_id)
     orden_id = item.orden_cotizacion.id
     item.delete()
+    messages.add_message(request, messages.INFO, 'Se ha eliminado producto a su cotización!')
     return redirect('ver_cotizacion', orden_id=orden_id)
 
 
