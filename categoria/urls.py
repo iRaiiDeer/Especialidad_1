@@ -19,4 +19,5 @@ categoria_urlpatterns = [
 
     path('generar_reporte_cat/', views.generar_reporte_cat, name='generar_reporte_cat'),
 
+
 ]

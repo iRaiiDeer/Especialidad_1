@@ -36,6 +36,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
 from django.urls import reverse
 
+
+
+
 @login_required
 def listar_categoria(request):
     busqueda = request.GET.get("buscar")
@@ -108,6 +111,7 @@ def agregar_categoria(request):
         if formulario.is_valid():
             formulario.save()
             messages.add_message(request, messages.INFO, 'Categoria creada!')
+            return redirect('listar_categoria')
     return render(request, 'categoria/agregar_categoria.html',data)
     # profile = Profile.objects.get(user_id=request.user.id)
     # if profile.group_id != 1:
