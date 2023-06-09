@@ -33,6 +33,54 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
 from datetime import date
 from django.urls import reverse
+import plotly.graph_objects as go
+
+from django.shortcuts import render, redirect
+from .forms import ProductoForm
+from .models import Producto
+from django.contrib import messages
+
+
+def dashboard1(request):
+
+    # Obtener todos los productos
+    productos = Producto.objects.all()
+
+    # Gráfico de barras: Stock por producto
+    nombres_productos = [producto.nombre for producto in productos]
+    stock_productos = [producto.stock for producto in productos]
+
+    fig1 = go.Figure(data=go.Bar(x=nombres_productos, y=stock_productos))
+    fig1.update_layout(title='Stock por producto')
+
+    # Gráfico de pastel: Distribución de precios de los productos
+    precios = [producto.precio for producto in productos]
+    labels2 = ['<10000', '10000-20000', '20000-25000', '25000-35000', '>35000']
+    values2 = [
+        len([precio for precio in precios if precio < 10000]),
+        len([precio for precio in precios if 10000 <= precio < 20000]),
+        len([precio for precio in precios if 20000 <= precio < 25000]),
+        len([precio for precio in precios if 25000 <= precio < 35000]),
+        len([precio for precio in precios if precio >= 35000])
+    ]
+
+    fig2 = go.Figure(data=[go.Pie(labels=labels2, values=values2)])
+    fig2.update_layout(title='Distribución de precios de los productos')
+
+    # Datos útiles
+    cantidad_productos = len(productos)
+    producto_mas_caro = max(productos, key=lambda producto: producto.precio)
+    producto_mas_barato = min(productos, key=lambda producto: producto.precio)
+
+    context = {
+        'plot_div1': fig1.to_html(full_html=False),
+        'plot_div2': fig2.to_html(full_html=False),
+        'cantidad_productos': cantidad_productos,
+        'producto_mas_caro': producto_mas_caro,
+        'producto_mas_barato': producto_mas_barato,
+    }
+
+    return render(request, 'product/dashboard1.html',context)
 
 @login_required
 def listar_producto(request):
@@ -55,7 +103,7 @@ def listar_producto(request):
 
 @login_required
 
-def generar_reporte(request):
+def generar_reporte_prod(request):
     busqueda = request.GET.get("buscar")
     productos = Producto.objects.all()
     if busqueda:
@@ -117,18 +165,28 @@ def ejemplos_main(request):
     return render(request,template_name,{'profile':profile})
 
 #PRODUCTOS
-@login_required
-def agregar_producto(request):
+from django.shortcuts import render, redirect
+from .forms import ProductoForm
+from .models import Producto
+from django.contrib import messages
 
-    data = {
-        'form': ProductoForm()
-    }
+def agregar_producto(request):
     if request.method == 'POST':
         formulario = ProductoForm(data=request.POST)
         if formulario.is_valid():
             formulario.save()
-            messages.add_message(request, messages.INFO, 'Producto creado!')
-    return render(request, 'product/agregar.html',data)
+            messages.add_message(request, messages.SUCCESS, 'Producto creado!')
+            return redirect(to="listar_producto")
+    else:
+        formulario = ProductoForm()
+
+    proveedores = Proveedor.objects.all()
+    data = {
+        'form': formulario,
+        'proveedores': proveedores,
+    }
+
+    return render(request, 'product/agregar.html', data)
 
 
 
@@ -148,16 +206,19 @@ def agregar_producto(request):
 @login_required
 def actualizar_producto(request, id):
     producto = get_object_or_404(Producto, id=id)
-    data ={
-        'form': ProductoForm(instance=producto)
+    proveedores = Proveedor.objects.all()  # Obtén la lista de proveedores
+    data = {
+        'form': ProductoForm(instance=producto),
+        'proveedores': proveedores,  # Pasa la lista de proveedores al contexto
     }
     if request.method == 'POST':
-        formulario = ProductoForm(data=request.POST,instance=producto)
+        formulario = ProductoForm(data=request.POST, instance=producto)
         if formulario.is_valid():
             formulario.save()
             return redirect(to="listar_producto")
     messages.add_message(request, messages.INFO, 'Producto actualizado!')
-    return render(request, 'product/modificar.html',data)
+    return render(request, 'product/modificar.html', data)
+
 @login_required
 def eliminar_producto(request, id):
     producto = get_object_or_404(Producto, id=id)
@@ -185,7 +246,7 @@ def import_file(request):
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('carga_masiva')
     row_num = 0
-    columns = ['Nombre Producto','Precio','Descripcion','Talla','Categoria']
+    columns = ['Nombre Producto','Precio','Descripcion','Talla','Categoria','Stock']
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
     for col_num in range(len(columns)):
@@ -195,7 +256,7 @@ def import_file(request):
     date_format.num_format_str = 'dd/MM/yyyy'
     for row in range(1):
         row_num += 1
-        for col_num in range(5):
+        for col_num in range(6):
             if col_num == 0:
                 ws.write(row_num, col_num, 'ej: producto' , font_style)
             if col_num == 1:                           
@@ -206,6 +267,8 @@ def import_file(request):
                 ws.write(row_num, col_num, 'xs,s,m,l,xl' , font_style)
             if col_num == 4:                           
                 ws.write(row_num, col_num, '1,2,3...' , font_style)
+            if col_num == 5:                           
+                ws.write(row_num, col_num, 'Digite el stock' , font_style)
     wb.save(response)
     return response  
 
@@ -229,13 +292,14 @@ def ejemplos_carga_masiva_save(request):
             descripcion = str(item[3])            
             talla = str(item[4])
             categoria_id = str(item[5])
+            stock = int(item[6])
             producto_save = Producto(
                 nombre = nombre,            
                 precio = precio,
                 descripcion = descripcion,            
                 talla = talla,
-                categoria_id = categoria_id,         
-                
+                categoria_id = categoria_id,   
+                stock = stock,      
                 )
             producto_save.save()
         messages.add_message(request, messages.INFO, 'Carga masiva finalizada, se importaron '+str(acc)+' registros')

@@ -17,8 +17,7 @@ product_urlpatterns = [
     path('ejemplos_carga_masiva/',views.ejemplos_carga_masiva,name="ejemplos_carga_masiva"),
     path('ejemplos_carga_masiva_save/',views.ejemplos_carga_masiva_save,name="ejemplos_carga_masiva_save"),
     path('import_file/',views.import_file,name="import_file"),
-
-    path('generar_reporte/', views.generar_reporte, name='generar_reporte'),
-
+    path('generar_reporte_prod/', views.generar_reporte_prod, name='generar_reporte_prod'),
+    path('dashboard1/', views.dashboard1, name='dashboard1'),
 ]
 
