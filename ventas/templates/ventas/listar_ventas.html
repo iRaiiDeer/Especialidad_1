@@ -1,130 +1,242 @@
 {% extends "administrator/index_main.html" %}
 {% load static %}
+
 {% block content %}
-{% load humanize%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listar Venta</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 50px;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
 
-<style>
-    .search-container {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        margin-bottom: 20px;
-        position: relative;
-    }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .search-input {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px 0 0 4px;
-    }
+        .container h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333333;
+            text-align: center;
+        }
 
-    .search-input.custom-width {
-        width: 200px; /* Modifica este valor para ajustar el ancho */
-    }
+        .search-container {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
 
-    .search-button {
-        padding: 13px 16px;
-        border: none;
-        background-color: #007bff;
-        color: #fff;
-        border-radius: 0 4px 4px 0;
-        cursor: pointer;
-    }
+        .search-input {
+            flex: 1;
+            height: 40px;
+            margin-right: 10px;
+            padding: 5px;
+        }
 
-    .search-button:hover {
-        background-color: #0056b3;
-    }
+        .search-button,
+        .clear-button {
+            padding: 5px 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out;
+            margin-left: 10px;
+        }
 
-    .clear-button {
-        position: absolute;
-        top: 50%;
-        right: 50px;
-        transform: translateY(-50%);
-        background-color: transparent;
-        border: none;
-        color: #999;
-        cursor: pointer;
-        display: none;
-    }
+        .search-button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+        }
 
-    .clear-button:hover {
-        color: #777;
-    }
+        .clear-button {
+            background-color: #6c757d;
+            color: #ffffff;
+            border: none;
+        }
 
-    .product-list {
-        margin-top: 20px;
-    }
+        .list-container {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            margin-bottom: 30px;
+        }
 
-    .report-button {
-        margin-left: 10px;
-    }
-    
-    .narrower-button {
-        width: 150px; /* Ajusta este valor según tus necesidades */
-    }
-</style>
+        .list-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
 
-<div class="card">
-    <div class="card-body">
+        .list-item a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .list-item span {
+            color: #666666;
+            flex: 1;
+        }
+
+        .delete-button {
+            padding: 5px 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out;
+            background-color: #dc3545;
+            color: #ffffff;
+            border: none;
+        }
+
+        .delete-button:hover {
+            background-color: #bd2130;
+        }
+
+        .row {
+            margin-top: 30px;
+        }
+
+        .col-12 {
+            text-align: center;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
         <h2>Listar Ventas</h2>
         <form method="GET">
             <div class="search-container">
-                <div style="display: flex; align-items: center;">
-                    <input type="text" class="search-input custom-width form-control" placeholder="Buscar..." name="venta_id" value="{{ buscar }}">
-                    <button class="search-button btn" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <button class="clear-button" type="button">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+                <input type="text" class="search-input custom-width form-control" placeholder="Buscar..." name="venta_id" value="{{ buscar }}">
+                <button class="search-button btn" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="clear-button" type="button">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </form>
-        <div class="text-end">
-            <form method="GET" action="{% url 'generar_reporte_cat' %}" target="_blank">
-                <input type="hidden" name="buscar" value="{{ buscar }}">
-                <button type="submit" class="btn btn-primary report-button narrower-button">Generar PDF</button>
-            </form>
-        </div>
+
+        <form action="{% url 'generar_reporte_ventas' %}" method="get">
+            <div class="search-container">
+                <input type="text" class="search-input custom-width form-control" placeholder="Buscar por ID..." name="filtro_id" value="{{ filtro_id }}">
+                <button class="search-button btn" type="submit">
+                    <i class="fas fa-file-pdf"></i> Generar informe
+                </button>
+            </div>
+        </form>
+
         <p>Hoy se han hecho {{ ventas.count }} ventas</p>
-        <ul>
+        <ul class="list-container">
             {% for venta in ventas %}
-                <li>
-                    <a href="{% url 'ver_venta' venta_id=venta.id %}"> {{ venta.id }}</a> - Fecha: {{ venta.fecha_venta }}
-                </li>
+            <li class="list-item">
+                <i class="fas fa-search"></i>
+                &nbsp;
+                <a href="{% url 'ver_venta' venta_id=venta.id %}">Venta {{ venta.id }}</a> - <span>Cliente: {{ venta.cliente }}</span>
+                <form class="delete-form" action="{% url 'eliminar_venta' venta.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-button" data-venta-id="{{ venta.id }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </li>
             {% empty %}
-                <li>No hay ventas.</li>
+            <li>No hay ventas.</li>
             {% endfor %}
         </ul>
+
         <div class="row">
             <div class="col-12 col-sm-12">
-                <a href="{% url 'venta_main' %}" class="btn btn-danger form-control">Volver</a>
+                <a href="{% url 'crear_venta' %}" class="btn btn-primary">Crear Venta</a>
             </div>
         </div>
     </div>
-</div>
+    {% if messages %}
+    {% for me in messages %}
 
-<script src="https://kit.fontawesome.com/b408879b64.js" crossorigin="anonymous"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.querySelector('.search-input');
-        const clearButton = document.querySelector('.clear-button');
+    <script>
+        Swal.fire({
+            "title": "ATENCION",
+            "text": "{{me}}",
+            "icon": "success",
+        })
+    </script>
+    {% endfor %}
+    {% endif %}
+    <script src="https://kit.fontawesome.com/b408879b64.js" crossorigin="anonymous"></script>
 
-        if (searchInput.value === "None") {
-            searchInput.value = "";
-        }
+    <script>
 
-        searchInput.addEventListener('input', function () {
-            clearButton.style.display = this.value ? 'block' : 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.querySelector('.search-input');
+            const clearButton = document.querySelector('.clear-button');
+
+            if (searchInput.value === "None") {
+                searchInput.value = "";
+            }
+
+            searchInput.addEventListener('input', function () {
+                clearButton.style.display = this.value ? 'block' : 'none';
+            });
+
+            clearButton.addEventListener('click', function () {
+                searchInput.value = '';
+                clearButton.style.display = 'none';
+                // Aquí redirige al mismo listado sin parámetros de búsqueda para mostrar todos los productos nuevamente
+                window.location.href = "{% url 'listar_ventas' %}";
+            });
         });
 
-        clearButton.addEventListener('click', function () {
-            searchInput.value = '';
-            clearButton.style.display = 'none';
-            // Aquí redirige al mismo listado sin parámetros de búsqueda para mostrar todos los productos nuevamente
-            window.location.href = "{% url 'listar_ventas' %}";
-        });
-    });
-</script>
+        $(document).ready(function () {
+            $('.delete-button').click(function () {
+                var ventaId = $(this).data('venta-id');
+                var listItem = $(this).closest('li');
 
+                $.ajax({
+                    url: '/eliminar_venta/' + ventaId + '/',
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        listItem.remove();
+                    },
+                    error: function (xhr, errmsg, err) {
+                        alert('Error al eliminar la venta.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
 {% endblock %}
