@@ -1,0 +1,93 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <!-- Agrega los siguientes scripts para cargar Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-left: 100px;
+        }
+        .container {
+            display: flex;
+            justify-content: center; /* Centrado horizontal */
+            margin-left: 240px; /* Desplazamiento hacia la derecha */
+        }
+        .dashboard {
+            width: 100%; /* Ancho completo */
+            max-width: 800px; /* Ancho máximo para limitar el tamaño */
+        }
+        .data-container {
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 100px;
+            text-align: center; /* Centrado del contenido */
+        }
+        .data-container h2 {
+            margin-top: 0;
+            
+        }
+        .chart-container1 {
+            width: 650px;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: -200px;
+        }
+        .chart-container2 {
+            width: 650px;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 500px;
+            margin-top: -512px;
+        }
+        .chart-container h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <h1>Dashboard de Producto</h1>
+
+            <div class="data-container">
+                <h2>Datos útiles</h2>
+                <p>Cantidad total de productos: {{ cantidad_productos }}</p>
+                <p>Producto más caro: {{ producto_mas_caro }}</p>
+                <p>Producto más barato: {{ producto_mas_barato }}</p>
+            </div>
+
+            <div class="chart-container1">
+                <!-- Div para incrustar el primer gráfico generado por Plotly -->
+                {{ plot_div1|safe }}
+            </div>
+
+            <div class="chart-container2">
+                <!-- Div para incrustar el segundo gráfico generado por Plotly -->
+                {{ plot_div2|safe }}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}
