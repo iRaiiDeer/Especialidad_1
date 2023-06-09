@@ -9,6 +9,9 @@ class Venta(models.Model):
 
     def __str__(self):
         return f"Venta #{self.id}"
+    def calcular_total(self):
+        total = sum(item.subtotal for item in self.items.all())
+        return total
 
 class ItemVenta(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE, related_name='items')
@@ -18,4 +21,8 @@ class ItemVenta(models.Model):
 
     def __str__(self):
         return f"Item de Venta #{self.id}"
+    
+    def actualizar_stock_eliminacion(self):
+        self.producto.stock += self.cantidad
+        self.producto.save()
     

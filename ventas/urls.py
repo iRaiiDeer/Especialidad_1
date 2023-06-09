@@ -15,4 +15,7 @@ ventas_urlpatterns = [
     # path('eliminar_item/<int:item_id>/', views.eliminar_item, name='eliminar_item'),
     path('ventas/<int:venta_id>/agregar_item/', views.agregar_item, name='agregar_item'),
     path('ventas/<int:venta_id>/eliminar_item/<int:item_id>/', views.eliminar_item, name='eliminar_item'),
+    path('ventas/generar-reporte/', views.generar_reporte_ventas, name='generar_reporte_ventas'),
+    path('eliminar_venta/<int:venta_id>/', views.eliminar_venta, name='eliminar_venta'),
+    path('dashboard6/', views.dashboard6, name='dashboard6'),
 ]
