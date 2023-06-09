@@ -1,0 +1,109 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-left: 100px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-left: 240px;
+        }
+        .dashboard {
+            width: 100%;
+            max-width: 800px;
+        }
+        .data-container {
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 100px;
+            text-align: center;
+        }
+        .data-container h2 {
+            margin-top: 0;
+        }
+        .chart-container {
+            width: 550px;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .chart-container1 {
+            margin-top: 20px;
+            margin-left: 185px;
+        }
+        .chart-container2 {
+            margin-top: 20px;
+            margin-left: 185px;
+        }
+        .chart-container h2 {
+            margin-top: 0;
+        }
+        .last-quotations {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .last-quotations p {
+            margin: 0;
+            padding: 5px;
+        }
+        .last-quotations p:not(:last-child):after {
+            content: ",";
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <h1>Dashboard de Cotización</h1>
+            <div class="data-container">
+                <h2>Datos útiles</h2>
+                <ul>
+                    <p>Cantidad de cotizaciones realizadas: {{ total_cotizaciones }}</p>
+                    <p>Últimas cotizaciones:</p>
+                    <div class="last-quotations">
+                        {% for cotizacion in cotizaciones_clientes %}
+                            <p>{{ cotizacion }}</p>
+                        {% endfor %}
+                    </div>
+                </ul>
+            </div>
+            <div class="chart-container chart-container1">
+                <h2>Gráfico 1: Distribución de cotizaciones por cliente</h2>
+                <!-- Inserta el gráfico de barras -->
+                {{ fig1|safe }}
+            </div>
+            <div class="chart-container chart-container2">
+                <h2>Gráfico 2: Total de cotizaciones a lo largo del tiempo</h2>
+                <!-- Inserta el gráfico de pastel -->
+                {{ fig2|safe }}
+            </div>
+        </div>
+    </div>
+    <!-- Agrega los enlaces CSS y JavaScript necesarios para Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</body>
+</html>
+{% endblock %}

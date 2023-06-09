@@ -1,11 +1,48 @@
+{% extends "administrator/index_main.html" %}
+{% load static %}
+{% block content %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Confirmación de envío de cotización</title>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            padding: 20px;
+            text-align: center;
+            background-color: #f1f1f1;
+            font-family: Arial, sans-serif;
+        }
+        .purple-button {
+            background-color: purple;
+            color: white;
+        }
+        h1 {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+        .message-box {
+            width: 50%;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Correo enviado correctamente</h1>
-    <p>Se ha enviado la cotización con ID {{ cotizacion.id }} al correo {{ cotizacion.cliente.correo }}.</p>
-    <!-- Resto del contenido de la página de confirmación -->
+    <div class="container">
+        <h1>Correo enviado correctamente</h1>
+        <div class="alert alert-info message-box" role="alert">
+            <p>Se ha enviado la cotización con ID {{ cotizacion.id }} al correo {{ cotizacion.cliente.correo }}.</p>
+            <div class="btn btn-primary purple-button">
+                <a href="{% url 'listar_cotizacion' %}">
+                    Volver
+                </a>
+            </div>
+        </div>
+    <script>
+    </script>
 </body>
 </html>
+{% endblock %}

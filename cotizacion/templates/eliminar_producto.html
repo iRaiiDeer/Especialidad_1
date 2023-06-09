@@ -5,21 +5,41 @@
 <html>
 <head>
     <title>Eliminar Producto</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .confirmation-message {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Eliminar Producto</h1>
-    <p>Estás a punto de eliminar el siguiente producto de la cotización:</p>
-    <p>Cotización ID: {{ cotizacion.id }}</p>
-    <p>Producto ID: {{ producto.id }}</p>
-    <p>Nombre: {{ producto.nombre }}</p>
-    <p>Cantidad: {{ producto.cantidad }}</p>
-    
-    <p>¿Estás seguro de que deseas eliminar este producto?</p>
-    
-    <form method="post">
-        {% csrf_token %}
-        <input type="submit" value="Eliminar">
-    </form>
+    <div class="container">
+        <h1>Eliminar Producto</h1>
+        <p class="confirmation-message">Estás a punto de eliminar el siguiente producto de la cotización:</p>
+        <p>Cotización ID: {{ cotizacion.id }}</p>
+        <p>Producto ID: {{ producto.id }}</p>
+        <p>Nombre: {{ producto.nombre }}</p>
+        <p>Cantidad: {{ producto.cantidad }}</p>
+        
+        <p>¿Estás seguro de que deseas eliminar este producto?</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" value="Eliminar" class="btn btn-danger">
+        </form>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
 {% endblock %}

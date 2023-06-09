@@ -5,25 +5,87 @@
 <html>
 <head>
     <title>Agregar Item</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5; /* Color de fondo */
+        }
+
+        .container {
+            width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group select,
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn-container {
+            text-align: center;
+        }
+
+        .btn-container a {
+            margin-right: 10px;
+        }
+        </style>
 </head>
 <body>
-    <h1>Agregar Item</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="producto">Producto:</label>
-        <select name="producto" required>
-            {% for producto in productos %}
-            <option value="{{ producto.id }}">{{ producto.nombre }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
-        <label for="cantidad">Cantidad:</label>
-        <input type="number" name="cantidad" value="1" required>
-        <br><br>
-        <input type="submit" value="Agregar Item">
-    </form>
-    <br>
-    <a href="{% url 'ver_cotizacion' orden_id=orden.id %}">Volver a la Cotizacion</a>
+    <div class="container">
+        <h1>Agregar Item</h1>
+        <table>
+            <form method="post">
+                {% csrf_token %}
+                <tr>
+                    <td><label for="producto">Producto:</label></td>
+                    <td>
+                        <select class="form-control" name="producto" required>
+                            {% for producto in productos %}
+                            <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="cantidad">Cantidad:</label></td>
+                    <td><input class="form-control" type="number" name="cantidad" value="1" required></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">
+                        <input class="btn btn-primary" type="submit" value="Agregar Item">
+                    </td>
+                </tr>
+            </form>
+        </table>
+        <br>
+        <a href="{% url 'ver_cotizacion' orden_id=orden.id %}" class="btn btn-volver">Volver a la Cotización</a>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
 {% endblock %}
