@@ -36,7 +36,52 @@ from django.core.mail import EmailMessage
 import tempfile
 import os
 import io
+from django.http import JsonResponse
 from io import BytesIO
+from .models import *
+
+from plotly.offline import plot
+import plotly.graph_objs as go
+import plotly.graph_objs as go
+
+
+def dashboard4(request):
+    # Obtener todas las órdenes de compra
+    ordenes_compra = OrdenCompra.objects.all()
+
+    # Crear una lista de totales de órdenes de compra
+    totales = [orden.calcular_total() for orden in ordenes_compra]
+
+    # Configurar el gráfico de barras para los totales de órdenes de compra
+    fig1 = go.Figure(data=go.Bar(x=[f'Orden #{i + 1}' for i in range(len(ordenes_compra))], y=totales))
+    fig1.update_layout(title='Total de órdenes de compra')
+
+    # Crear una lista de proveedores y sus respectivas cantidades de órdenes de compra
+    proveedores = [orden.proveedor.nombre for orden in ordenes_compra]
+    cantidades = [orden.proveedor.ordencompra_set.count() for orden in ordenes_compra]
+
+    # Configurar el gráfico de barras para las cantidades de órdenes de compra por proveedor
+    fig2 = go.Figure(data=go.Bar(x=proveedores, y=cantidades))
+    fig2.update_layout(title='Cantidad de órdenes de compra por proveedor')
+
+    # Calcular el promedio de totales de órdenes de compra
+    promedio_total = sum(totales) / len(totales)
+
+    # Obtener la orden de compra con el total máximo
+    orden_max_total = max(ordenes_compra, key=lambda orden: orden.calcular_total())
+
+    # Obtener la orden de compra con el total mínimo
+    orden_min_total = min(ordenes_compra, key=lambda orden: orden.calcular_total())
+
+    context = {
+        'plot_div1': fig1.to_html(full_html=False),
+        'plot_div2': fig2.to_html(full_html=False),
+        'promedio_total': promedio_total,
+        'orden_max_total': orden_max_total,
+        'orden_min_total': orden_min_total
+    }
+
+    return render(request, 'ordencompra/dashboard_4.html', context)
 def crear_orden_compra(request):
     if request.method == 'POST':
         proveedor_id = request.POST.get('proveedor')
@@ -48,6 +93,7 @@ def crear_orden_compra(request):
         item = ItemOrden.objects.create(orden_compra=orden_compra, producto=producto, cantidad=cantidad)
         producto.stock += cantidad
         producto.save()
+        messages.add_message(request, messages.INFO, 'Se ha creado su orden de compra!')
         return redirect('ver_orden_compra', orden_id=orden_compra.id)
     
     proveedores = Proveedor.objects.all()
@@ -63,6 +109,7 @@ def ver_orden_compra(request, orden_id):
 def eliminar_orden_compra(request, orden_id):
     orden = get_object_or_404(OrdenCompra, id=orden_id)
     orden.delete()
+    messages.add_message(request, messages.INFO, 'Se ha eliminado su orden de compra!')
     return redirect('listar_ordenes_compra')
 
 def listar_ordenes_compra(request):
@@ -93,6 +140,7 @@ def agregar_item(request, orden_id):
         item = ItemOrden.objects.create(orden_compra=orden, producto=producto, cantidad=cantidad)
         producto.stock += cantidad
         producto.save()
+        messages.add_message(request, messages.INFO, 'Se ha añadido su item a la orden de compra!')
         return redirect('ver_orden_compra', orden_id=orden.id)
     else:
         orden = get_object_or_404(OrdenCompra, id=orden_id)
@@ -104,6 +152,7 @@ def eliminar_item(request, item_id):
     item = get_object_or_404(ItemOrden, id=item_id)
     orden_id = item.orden_compra.id
     item.delete()
+    messages.add_message(request, messages.INFO, 'Se ha eliminado su item de la orden de compra!')
     return redirect('ver_orden_compra', orden_id=orden_id)
 
 def order_main(request):
@@ -113,6 +162,44 @@ def order_main(request):
         return redirect('check_group_main')
     template_name = 'ordencompra/order_main.html'
     return render(request,template_name,{'profile':profile})
+
+def editar_item(request, item_id):
+    item = get_object_or_404(ItemOrden, id=item_id)
+
+    if request.method == 'POST':
+        producto_id = request.POST.get('producto')
+        cantidad = int(request.POST.get('cantidad'))
+        producto = get_object_or_404(Producto, id=producto_id)
+        
+        # Actualizar los valores del item
+        item.producto = producto
+        item.cantidad = cantidad
+        item.save()
+
+        # Actualizar el stock del producto
+        producto.stock -= item.cantidad
+        producto.stock += cantidad
+        producto.save()
+
+        return redirect('ver_orden_compra', orden_id=item.orden_compra.id)
+    
+    productos = Producto.objects.all()
+    return render(request, 'ordencompra/editar_item.html', {'item': item, 'productos': productos})
+def guardar_item(request, item_id):
+    if request.method == 'POST':
+        item = get_object_or_404(ItemOrden, id=item_id)
+        producto_id = request.POST.get('producto')
+        cantidad = int(request.POST.get('cantidad'))
+        producto = get_object_or_404(Producto, id=producto_id)
+        item.producto = producto
+        item.cantidad = cantidad
+        item.save()
+        producto.stock += cantidad
+        producto.save()
+        return redirect('ver_orden_compra', orden_id=item.orden_compra.id)
+    else:
+        return redirect('listar_ordenes_compra')
+
 
 
 
@@ -275,7 +362,6 @@ def enviar_correo_oc(request):
             # Enviar el correo electrónico
         try:
             email.send()
-
             return render(request, 'confirmacion_correo.html', {'orden_compra': orden_compra})
         except Exception as e:
             # Manejar el error o mostrar un mensaje de error
