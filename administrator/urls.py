@@ -24,7 +24,7 @@ administrator_patterns = [
     path('carga_masiva_save_user/',views.carga_masiva_save_user,name="carga_masiva_save_user"),
     path('import_file_user/',views.import_file_user,name="import_file_user"), 
 
-
+    path('dashboard7/', views.dashboard7, name='dashboard7'),
     #BORRAR
     path('ejemplo_query_set/',views.ejemplo_query_set, name='ejemplo_query_set'),  
     ]  

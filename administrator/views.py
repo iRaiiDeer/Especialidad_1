@@ -6,8 +6,6 @@ import xlwt
 from turtle import home
 import pandas as pd
 from datetime import datetime, time, timedelta
-
-
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -20,16 +18,127 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 from registration.models import Profile
-
+from django.db.models import Q
+import plotly.graph_objs as go
+from product.models import Producto
+from ordencompra.models import OrdenCompra,ItemOrden
+from ventas.models import Venta,ItemVenta
+from cotizacion.models import Cotizacion,ItemCot
+from prov.models import Proveedor
+from reportlab.lib.pagesizes import letter
 
 @login_required
 def admin_main(request):
-    profiles = Profile.objects.get(user_id = request.user.id)
+    profiles = Profile.objects.get(user_id=request.user.id)
     if profiles.group_id != 1 and profiles.group_id != 2:
-        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la que no tiene permisos')
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a un área para la que no tiene permisos')
         return redirect('check_group_main')
+
+    # Gráfico de pastel: Estado de los usuarios
+    usuarios_activos = User.objects.filter(is_active=True).count()
+    usuarios_bloqueados = User.objects.filter(is_active=False).count()
+    fig1 = go.Figure(data=[go.Pie(labels=['Activos', 'Bloqueados'], values=[usuarios_activos, usuarios_bloqueados])])
+    fig1.update_layout(title='Estado de los usuarios')
+    plot_data1 = fig1.to_html(full_html=False, default_height=500)
+
+    # Gráfico de pastel: Distribución de cotizaciones por cliente
+    cliente_count = Cotizacion.objects.values('cliente__nombre1').annotate(count=Count('cliente__nombre1'))
+    fig2 = go.Figure(data=[go.Pie(labels=[cliente['cliente__nombre1'] for cliente in cliente_count], values=[cliente['count'] for cliente in cliente_count])])
+    fig2.update_layout(title='Distribución de cotizaciones por cliente')
+
+    # Obtener todos los productos
+    productos = Producto.objects.all()
+
+    # Gráfico de barras: Stock por producto
+    nombres_productos = [producto.nombre for producto in productos]
+    stock_productos = [producto.stock for producto in productos]
+    fig3 = go.Figure(data=go.Bar(x=nombres_productos, y=stock_productos))
+    fig3.update_layout(title='Stock por producto')
+
+    # Obtener todas las órdenes de compra
+    ordenes_compra = OrdenCompra.objects.all()
+
+    # Crear una lista de totales de órdenes de compra
+    totales_ordenes_compra = [orden.calcular_total() for orden in ordenes_compra]
+
+    # Configurar el gráfico de barras para los totales de órdenes de compra
+    fig4 = go.Figure(data=go.Bar(x=[f'Orden #{i + 1}' for i in range(len(ordenes_compra))], y=totales_ordenes_compra))
+    fig4.update_layout(title='Total de órdenes de compra')
+
+    # Obtener todas las ventas
+    ventas = Venta.objects.all()
+
+    # Gráfico de barras: Cantidad de ventas por cliente
+    clientes = [venta.cliente.nombre1 for venta in ventas]
+    labels_ventas = sorted(list(set(clientes)))
+    values_ventas = [clientes.count(cliente) for cliente in labels_ventas]
+    fig5 = go.Figure(data=go.Bar(x=labels_ventas, y=values_ventas))
+    fig5.update_layout(title='Cantidad de ventas por cliente')
+
+    proveedores = Proveedor.objects.all()
+    # Gráfico de pastel: Distribución de proveedores por empresa
+    empresas = [proveedor.empresa for proveedor in proveedores]
+    empresa_count = {}
+    for empresa in empresas:
+        if empresa in empresa_count:
+            empresa_count[empresa] += 1
+        else:
+            empresa_count[empresa] = 1
+
+    fig6 = go.Figure(data=[go.Pie(labels=list(empresa_count.keys()), values=list(empresa_count.values()))])
+    fig6.update_layout(title='Distribución de proveedores por empresa')
+
+    context = {
+        'plot_data1': plot_data1,
+        'fig2': fig2.to_html(full_html=False, default_height=500),
+        'fig3': fig3.to_html(full_html=False, default_height=500),
+        'fig4': fig4.to_html(full_html=False, default_height=500),
+        'fig5': fig5.to_html(full_html=False, default_height=500),
+        'fig6': fig6.to_html(full_html=False, default_height=500),
+        'profiles': profiles
+    }
     template_name = 'administrator/admin_main.html'
-    return render(request,template_name,{'profiles':profiles})
+    return render(request, template_name, context)
+
+@login_required
+def dashboard7(request):
+    # Obtener todos los usuarios
+    usuarios = User.objects.all()
+
+    # Gráfico de barras: Usuarios creados por fecha
+    fechas = usuarios.dates('date_joined', 'day')
+    labels = [fecha.strftime('%Y-%m-%d') for fecha in fechas]
+    values = [usuarios.filter(date_joined__date=fecha).count() for fecha in fechas]
+
+    fig1 = go.Figure(data=go.Bar(x=labels, y=values))
+    fig1.update_layout(title='Usuarios creados por fecha')
+    plot_data1 = fig1.to_html(full_html=False)
+
+    # Gráfico de pastel: Estado de los usuarios
+    estados = ['Activos', 'Bloqueados']
+    values2 = [
+        usuarios.filter(is_active=True).count(),
+        usuarios.filter(is_active=False).count(),
+    ]
+
+    fig2 = go.Figure(data=[go.Pie(labels=estados, values=values2)])
+    fig2.update_layout(title='Estado de los usuarios')
+    plot_data2 = fig2.to_html(full_html=False)
+
+    # Datos útiles
+    cantidad_usuarios_activos = usuarios.filter(is_active=True).count()
+    cantidad_usuarios_bloqueados = usuarios.filter(is_active=False).count()
+    ultimo_usuario_creado = usuarios.latest('date_joined')
+
+    context = {
+        'plot_data1': plot_data1,  # Gráfico 1 convertido a HTML
+        'plot_data2': plot_data2,  # Gráfico 2 convertido a HTML
+        'cantidad_usuarios_activos': cantidad_usuarios_activos,  # Cantidad de usuarios activos
+        'cantidad_usuarios_bloqueados': cantidad_usuarios_bloqueados,  # Cantidad de usuarios bloqueados
+        'ultimo_usuario_creado': ultimo_usuario_creado,  # Último usuario creado
+    }
+
+    return render(request, 'administrator/dashboard7.html', context)
 
 #Flujo usuarios
 @login_required
@@ -134,30 +243,36 @@ def edit_user(request,user_id):
     return render(request,template_name,{'user_data':user_data,'profile_data':profile_data,'groups':groups,'profile_list':profile_list})
 
 @login_required    
-def list_user_active(request,group_id,page=None):
-    profiles = Profile.objects.get(user_id = request.user.id)
+def list_user_active(request, group_id, page=None):
+    profiles = Profile.objects.get(user_id=request.user.id)
     if profiles.group_id != 1 and profiles.group_id != 2:
-        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la que no tiene permisos')
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a una área para la que no tiene permisos')
         return redirect('check_group_main')
-    if page == None:
+    
+    buscar = request.GET.get('buscar')  # Obtener el valor del parámetro de búsqueda
+    
+    if page is None:
         page = request.GET.get('page')
-    else:
-        page = page
-    if request.GET.get('page') == None:
-        page = page
-    else:
-        page = request.GET.get('page')
+    
     group = Group.objects.get(pk=group_id)
     user_all = []
-    user_array = User.objects.filter(is_active='t').filter(profile__group_id=group_id).order_by('first_name')
+    
+    user_array = User.objects.filter(is_active=True, profile__group_id=group_id).order_by('first_name')
+    
+    if buscar:  # Aplicar el filtro de búsqueda si se proporciona un valor
+        user_array = user_array.filter(first_name__icontains=buscar) | user_array.filter(last_name__icontains=buscar)
+    
     for us in user_array:
         profile_data = Profile.objects.get(user_id=us.id)
-        name = us.first_name+' '+us.last_name
-        user_all.append({'id':us.id,'user_name':us.username,'name':name,'mail':us.email})
-    paginator = Paginator(user_all, 30)  
+        name = us.first_name + ' ' + us.last_name
+        user_all.append({'id': us.id, 'user_name': us.username, 'name': name, 'mail': us.email})
+    
+    paginator = Paginator(user_all, 30)
     user_list = paginator.get_page(page)
     template_name = 'administrator/list_user_active.html'
-    return render(request,template_name,{'profiles':profiles,'group':group,'user_list':user_list,'paginator':paginator,'page':page})
+    
+    return render(request, template_name, {'profiles': profiles, 'group': group, 'user_list': user_list, 'paginator': paginator, 'page': page})
+
 @login_required    
 def list_user_block(request,group_id,page=None):
     profiles = Profile.objects.get(user_id = request.user.id)
@@ -286,52 +401,46 @@ def import_file_user(request):
 
 @login_required
 def carga_masiva_save_user(request):
-    profiles = Profile.objects.get(user_id = request.user.id)
+    profiles = Profile.objects.get(user_id=request.user.id)
     if profiles.group_id != 1:
-        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la que no tiene permisos')
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a un área para la que no tiene permisos')
         return redirect('check_group_main')
 
     if request.method == 'POST':
-        #try:
-        print(request.FILES['myfile'])
-        data = pd.read_excel(request.FILES['myfile'])
-        df = pd.DataFrame(data)
-        acc = 0
-        grupo = request.POST.get('grupo')
-        rut = request.POST.get('rut')
-        first_name = request.POST.get('name')
-        last_name = request.POST.get('last_name1')
-        email = request.POST.get('email')
-        mobile = request.POST.get('mobile')
-        #el metodo no contempla validacioens deberá realizarlas
-        rut_exist = User.objects.filter(username=rut).count()
-        mail_exist = User.objects.filter(email=email).count()
-
-        for item in df.itertuples():
-            #capturamos los datos desde excel
-            grupo = str(item[1])            
-            rut = str(item[2])
-            first_name = str(item[3])            
-            last_name = str(item[4])
-            email = str(item[5])
-            mobile=int(item[6])
-            user = User.objects.create_user(
-                    username= rut,
+        try:
+            myfile = request.FILES['myfile']
+            data = pd.read_excel(myfile)
+            df = pd.DataFrame(data)
+            acc = 0
+            for item in df.itertuples():
+                grupo = str(item[1])            
+                rut = str(item[2])
+                first_name = str(item[3])            
+                last_name = str(item[4])
+                email = str(item[5])
+                mobile = int(item[6])
+                user = User.objects.create_user(
+                    username=rut,
                     email=email,
                     password=rut,
                     first_name=first_name,
                     last_name=last_name,
-                    )
-            profile_save = Profile(
-                    user_id = user.id,
-                    group_id = grupo,
-                    first_session = 'No',
-                    token_app_session = 'No',
                 )
-            profile_save.save()
-            profile_save.save()
-        messages.add_message(request, messages.INFO, 'Carga masiva finalizada')
-        return redirect('masiva_usuarios')    
+                profile_save = Profile(
+                    user_id=user.id,
+                    group_id=grupo,
+                    first_session='No',
+                    token_app_session='No',
+                )
+                profile_save.save()
+            messages.add_message(request, messages.INFO, 'Carga masiva finalizada')
+            return redirect('masiva_usuarios')
+        except Exception as e:
+            messages.add_message(request, messages.ERROR, 'Error en la carga masiva: {}'.format(str(e)))
+
+    return render(request, 'administrator/masiva_usuarios.html', {'profiles': profiles})
+
+
 
 
 

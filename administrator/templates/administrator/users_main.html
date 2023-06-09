@@ -1,28 +1,64 @@
 {% extends "administrator/index_main.html" %}
 {% load static %}
 {% block content %}
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f7f7f7;
+    }
+
+    .d-grid {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 80px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 50px;
+        background-color: #ffffff;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 36px;
+        font-weight: bold;
+        color: #1A5276;
+    }
+
+    .btn {
+        width: 100%;
+        height: 40px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 4px;
+        background-color: #75A7C3;
+        border-color: #75A7C3;
+        color: #ffffff;
+        transition: background-color 0.3s ease-in-out;
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn:hover {
+        background-color: #154360;
+    }
+</style>
 
 <main role="main">
     <div class="d-grid gap-2 col-6 mx-auto">
-        <!-- <div class="col-30  mt-4 border"> -->
-            <h1 class="mb-3 text-blue text-center">GESTIÓN DE USUARIOS</h1>
-            <!-- <div class="row mt-4 mb-4"></div> -->
-            {% if profiles.group_id == 1%}
-            <a href="{% url 'new_user' %}" class="btn btn-dark" >Nuevo
-                Usuario</a>
-            {% endif %}
-            {% for g in groups %}
-            <div class="col-12 col-sm-3 mb-3"></div>
-            <a href="{% url 'list_main' g.id %}" class="btn btn-dark"
-                type="button">{{g.name}}</a>
-            {% endfor %}
-            <div class="col-12 col-sm-3 mb-3"></div>
-            <a href="{% url 'masiva_usuarios' %}" class="btn btn-dark" 
-                type="button">Carga Masiva</a>
-            <div class="col-12 col-sm-3 mb-3"></div>
-            <a href="{% url 'admin_main' %}" class="btn btn-dark" 
-                type="button">Volver</a>
-        <!-- </div> -->
+        <h1 class="mb-3 text-blue text-center">GESTIÓN DE USUARIOS</h1>
+        {% for g in groups %}
+        <div class="col-12 col-sm-3 mb-3"></div>
+        <a href="{% url 'list_main' g.id %}" class="btn" type="button">{{ g.name }}</a>
+        {% endfor %}
     </div>
 </main>
 {% endblock %}

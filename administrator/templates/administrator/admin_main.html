@@ -1,27 +1,148 @@
 {% extends "administrator/index_main.html" %}
 {% load static %}
-{% block content %}
 
-<main role="main">
-    <!-- <div class="container col-12 mt-3"> -->
-    <!-- <div class="col-12  mt-3 border"> -->
-    <div class="d-grid gap-2 col-6 mx-auto">
-        <div class="col-12 col-sm-3 mb-3"></div>
-        <h2 class="mb-3 text-blue text-center">PANEL DE ADMINISTRACIÓN{{request.user.first_name}} {{request.user.last_name}}</h2>
-        <!-- <h3>Panel de administracion{{request.user.first_name}} {{request.user.last_name}} </h3> -->
-        <a href="{% url 'users_main' %}" class="btn btn-dark" style="background-color: #000000;" type="button">Gestión Usuarios</a>
-        <div class="col-12 col-sm-3 mb-3"></div>
-        <a href="{% url 'ejemplos_main' %}" class="btn btn-dark" style="background-color: #000000;" type="button">Gestión Productos</a>
-        <div class="col-12 col-sm-3 mb-3"></div>
-        <a href="{% url 'proveedor_main' %}" class="btn btn-dark" style="background-color: #000000;" type="button">Gestión Proveedores</a>
-        <div class="col-12 col-sm-3 mb-3"></div>
-        <a href="{% url 'clientes_main' %}" class="btn btn-dark" style="background-color: #000000;" type="button">Gestión Clientes</a>
-        <div class="col-12 col-sm-3 mb-3"></div>
-        <a href="{% url 'order_main' %}" class="btn btn-dark" style="background-color: #000000;" type="button">Gestión Compras</a>
-        <div class="col-12 col-sm-3 mb-3"></div>
-        <a href="{% url 'venta_main' %}" class="btn btn-dark" style="background-color: #000000;" type="button">Gestión Venta</a>
-        
+{% block content %}
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-left: 100px;
+        }
+        .container {
+            display: flex;
+            justify-content: center; /* Centrado horizontal */
+            margin-left: 100px; /* Desplazamiento hacia la derecha */
+        }
+        .dashboard {
+            width: 100%; /* Ancho completo */
+            max-width: 800px; /* Ancho máximo para limitar el tamaño */
+        }
+        .data-container {
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 100px;
+            text-align: center; /* Centrado del contenido */
+        }
+        .data-container h2 {
+            margin-top: 0;
+            text-align: center; /* Centrado del título */
+        }
+        .chart-container {
+            width: 100%; /* Ancho completo */
+            max-width: 650px; /* Ancho máximo para limitar el tamaño */
+            margin: 0 auto; /* Centrado horizontal */
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .chart-container h3 {
+            margin-top: 0;
+            text-align: center; /* Centrado del título */
+        }
+        .chart-container1 {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <h1>Dashboard de Inicio</h1>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h3 class="text-center">Estado de los usuarios</h3>
+                                                <div class="chart-container1" id="plot1">{{ plot_data1|safe }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h3 class="text-center">Distribución de cotizaciones por cliente</h3>
+                                                <div class="chart-container" id="plot2">{{ fig2|safe }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h3 class="text-center">Stock por producto</h3>
+                                                <div class="chart-container" id="plot3">{{ fig3|safe }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h3 class="text-center">Total de órdenes de compra</h3>
+                                                <div class="chart-container" id="plot4">{{ fig4|safe }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h3 class="text-center">Cantidad de ventas por cliente</h3>
+                                                <div class="chart-container" id="plot5">{{ fig5|safe }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h3 class="text-center">Distribución de proveedores por empresa</h3>
+                                                <div class="chart-container" id="plot6">{{ fig6|safe }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  
-</main>
+
+    <!-- Agrega los enlaces CSS y JavaScript necesarios para Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</body>
+</html>
+
 {% endblock %}

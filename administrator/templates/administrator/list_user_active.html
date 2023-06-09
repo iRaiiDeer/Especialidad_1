@@ -2,63 +2,198 @@
 {% load static %}
 {% block content %}
 
+
+
 <style>
-    .errorlist {
-        color: red;
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: left;
+        height: 100vh;
+        background-color: #f7f7f7;
     }
+
+    .form-container {
+        width: 100%;
+        margin-left: 100px;
+        margin-top: 50px;
+        max-width: 2000px;
+        padding: 80px;
+        border: 1px solid #e2e8f0;
+        border-radius: 50px;
+        background-color: #ffffff;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 40px;
+        font-family: 'Times New Roman', Times, serif;
+        font-weight: bold;
+        color: #000000;
+        
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: bold;
+        color: #666666;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 30%;
+        height: 45px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #3e6faf;
+        border-radius: 4px;
+        background-color: #d10707;
+        color: #333333;
+        align-items: left;
+    }
+    .btn-danger {
+        background-color: #d10707;
+        border: none;
+        color: #fff;
+        font-weight: bold;
+        width: 100%;
+        padding:  12px; /* Ajusta estos valores según tus necesidades */
+
+    }
+
+
+
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0px 0px 0px 3px rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-primary {
+        width: 100%;
+        height: 40px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 4px;
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #ffffff;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        width: 100%;
+        height: 40px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 4px;
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #ffffff;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .btn-secondary:hover {
+        background-color: #555e64;
+    }
+    .btn-sm {     
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  width: 100px;
+  /* Otros estilos adicionales que desees aplicar */
+}
+.btn-sm2{
+    background-color: #d10707;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  width: 100px;
+}
+.btn-sm3{
+    background-color: #d10707;
+  color: #fff;
+  font-weight: bold;
+  margin-left: 480px;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  width: 100px;
+}
+.container.col-12 {
+        background-color: #f7f7f7;
+        background-size: cover;
+    }
+
+
 </style>
+<body>
 <main role="main">
     <div class="container col-12">
-        <div class="col-12 border">
+        <div class="form-container">
+            <form action="" method="get">
+                <input type="text" name="buscar" placeholder="Buscar..." value="{{ request.GET.buscar }}">
+                <button type="submit">Filtrar</button>
+            </form>
             <table id="service" class="table mt-2 table-hover table-sm table-bordered">
                 <thead class="table-secondary">
                     <tr>
-                    <tr>
                         {% if profiles.group_id == 1 %}
                         <th colspan="5">
-                            <h3>Listado De Usuarios {{group.name}} Activos</h3>
+                            <h3>Listado De Usuarios {{ profiles.group.name }} Activos</h3>
                         </th>
                         {% endif %}
                         {% if profiles.group_id == 2 %}
                         <th colspan="4">
-                            <h3>Listado De Usuarios {{group.name}} Activos</h3>
+                            <h3>Listado De Usuarios {{ profiles.group.name }} Activos</h3>
                         </th>
                         {% endif %}
-                        <th colspan="1">
-                            <div class="row">
-                                <div class="col-12 col-sm-12">
-                                    <a href="{% url 'list_main' group.id %}"
-                                        class="btn btn-danger form-control">Volver</a>
-                                </div>
-                            </div>
-                        </th>
                     </tr>
                     <tr class="text-center">
-                        <th width="300" scope="col">Rut</th>
+                        <th width="450" scope="col">Rut</th>
                         <th width="450" scope="col">Nombre Completo</th>
-                        <th width="300" scope="col">Correo</th>
+                        <th width="450" scope="col">Correo</th>
                         {% if profiles.group_id == 1 %}
-                        <th width="250" scope="col">Funciones</th>
+                        <th width="450" scope="col">Funciones</th>
                         {% endif %}
                     </tr>
                 </thead>
                 <tbody>
                     {% for s in user_list %}
                     <tr>
-                        <th scope="row">{{s.user_name}}</th>
-                        <th scope="row">{{s.name}}</th>
-                        <th scope="row">{{s.mail}}</th>
+                        <th scope="row">{{ s.user_name }}</th>
+                        <th scope="row">{{ s.name }}</th>
+                        <th scope="row">{{ s.mail }}</th>
                         {% if profiles.group_id == 1 %}
                         <th scope="row">
                             {% if s.id != request.user.id %}
-                            <a href="{% url 'edit_user' s.id %}">
-                                Edita Usuario
+                            <a href="{% url 'edit_user' s.id %}" class="btn  btn-sm">
+                                Editar
                             </a>
                             {% if s.id != request.user.id %}
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="{% url 'user_block' s.id  %}" data-toggle="modal" data-target="#userBlock"
-                                data-u_id="{{s.id}}" data-u_name="{{s.name}}" data-page="{{page}}">
-                                Bloquea Usuario
+                            <a href="{% url 'user_block' s.id %}" data-toggle="modal" data-target="#userBlock"
+                                data-u_id="{{ s.id }}" data-u_name="{{ s.name }}" data-page="{{ page }}" class="btn  btn-sm2">
+                                Bloquear
                             </a>
                             {% endif %}
                             {% endif %}
@@ -74,7 +209,7 @@
                 <ul class="pagination justify-content-center">
                     {% if user_list.has_previous %}
                     <li class="page-item ">
-                        <a class="page-link" href="?page={{ user_list.previous_page_number}}">&laquo;</a>
+                        <a class="page-link" href="?page={{ user_list.previous_page_number }}">&laquo;</a>
                     </li>
                     {% else %}
                     <li class="page-item disabled">
@@ -98,21 +233,40 @@
                 </ul>
             </nav>
             {% endif %}
+            <th colspan="1">
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <a href="{% url 'list_main' profiles.group.id %}"
+                            class="btn  btn-sm3" style="background-color: #d10707;">Volver</a>
+                    </div>
+                </div>
+            </th>
             <!-- Paginación -->
         </div>
     </div>
 </main>
 {% if messages %}
-{% for me in messages %}
+{% for message in messages %}
 <script>
     Swal.fire({
         "title": "ATENCION",
-        "text": "{{me}}",
+        "text": "{{ message }}",
         "icon": "success",
     })
+
+    document.getElementById('search-input').addEventListener('change', function() {
+        var searchValue = this.value.trim();
+        var currentUrl = window.location.href;
+
+        if (searchValue !== '') {
+            var updatedUrl = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'buscar=' + encodeURIComponent(searchValue);
+            document.getElementById('search-form').action = updatedUrl;
+        }
+    });
+
 </script>
+</body>
 {% endfor %}
 {% endif %}
-
 
 {% endblock %}
