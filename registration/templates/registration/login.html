@@ -4,6 +4,16 @@
 <html lang="en">
 
 <head>
+  <style>
+.reset-password-link {
+  color: blue;
+}
+
+.reset-password-link:visited {
+  color: white;
+}
+
+</style>
   <link href="{% static '/registration/css/styles.css' %}" rel="stylesheet">
 </head>
 <div class="background-blur">
@@ -31,8 +41,7 @@
             <span class="feedback body-small text-regular"></span>
           </div>
           <div class="d-flex justify-content-end mb-3">
-            <a class="body-normal text-blue text-decoration-underline cursor-pointer">Olvidé mi
-              contraseña</a>
+            <a href="{% url 'password_reset' %}" class="body-normal text-blue text-decoration-underline cursor-pointer reset-password-link">Olvidé mi contraseña</a>
           </div>
           <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-primary">
