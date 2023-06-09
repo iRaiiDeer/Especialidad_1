@@ -13,4 +13,9 @@ prov_urlpatterns = [
     path('eliminar_proveedor/<id>/',views.eliminar_proveedor,name="eliminar_proveedor"),
 
     path('generar_reporte_prov/', views.generar_reporte_prov, name='generar_reporte_prov'),
+
+    path('carga_masiva_prov/',views.carga_masiva_prov,name="carga_masiva_prov"),
+    path('carga_masiva_saveprov/',views.carga_masiva_saveprov,name="carga_masiva_saveprov"),
+    path('import_file/',views.import_file,name="import_file"),
+    path('dashboard2/', views.dashboard2, name='dashboard2'),
 ]

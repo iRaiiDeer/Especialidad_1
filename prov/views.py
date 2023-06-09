@@ -33,10 +33,51 @@ from django.template import Context
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
-
+import plotly.graph_objects as go
 from django.urls import reverse
 
+def dashboard2(request):
+    proveedores = Proveedor.objects.all()
 
+    # Datos útiles
+    total_proveedores = proveedores.count()
+    proveedores_ordenados = proveedores.order_by('-created')[:5]
+    proveedores_nuevos = [proveedor.empresa for proveedor in proveedores_ordenados]
+
+    # Gráfico 1: Distribución de proveedores por empresa
+    empresas = [proveedor.empresa for proveedor in proveedores]
+    empresa_count = {}
+    for empresa in empresas:
+        if empresa in empresa_count:
+            empresa_count[empresa] += 1
+        else:
+            empresa_count[empresa] = 1
+
+    fig1 = go.Figure(data=[go.Pie(labels=list(empresa_count.keys()), values=list(empresa_count.values()))])
+    fig1.update_layout(title='Distribución de proveedores por empresa')
+
+    # Gráfico 2: Crecimiento de proveedores a lo largo del tiempo
+    fechas = [proveedor.created.date() for proveedor in proveedores]
+    fechas_unicas = list(set(fechas))
+    fechas_unicas.sort()
+
+    proveedores_crecimiento = []
+    proveedores_cumulativos = 0
+    for fecha in fechas_unicas:
+        proveedores_dia = fechas.count(fecha)
+        proveedores_cumulativos += proveedores_dia
+        proveedores_crecimiento.append(proveedores_cumulativos)
+
+    fig2 = go.Figure(data=[go.Scatter(x=fechas_unicas, y=proveedores_crecimiento, mode='lines')])
+    fig2.update_layout(title='Crecimiento de proveedores a lo largo del tiempo', xaxis_title='Fecha', yaxis_title='Número de proveedores')
+
+    # Renderizar el dashboard
+    return render(request, 'prov/dashboard2.html', {
+        'total_proveedores': total_proveedores,
+        'proveedores_nuevos': proveedores_nuevos,
+        'fig1': fig1.to_html(full_html=False, default_height=500),
+        'fig2': fig2.to_html(full_html=False, default_height=500)
+    })
 
 @login_required
 def listar_proveedor(request):
@@ -97,22 +138,6 @@ def generar_reporte_prov(request):
 
     return response
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @login_required
 def proveedor_main(request):
     profile = Profile.objects.get(user_id=request.user.id)
@@ -131,6 +156,7 @@ def agregar_proveedor(request):
         if formulario.is_valid():
             formulario.save()
             messages.add_message(request, messages.INFO, 'Proveedor creado!')
+            return redirect('listar_proveedor')
     return render(request, 'prov/agregar_proveedor.html',data)
 
 
@@ -155,3 +181,84 @@ def eliminar_proveedor(request, id):
     proveedor.delete()
     messages.add_message(request, messages.INFO, 'proveedor eliminado!')
     return redirect(to="listar_proveedor")
+
+#CARGA MASIVA PROVEEDOR
+@login_required
+def carga_masiva_prov(request):
+    profiles = Profile.objects.get(user_id = request.user.id)
+    if profiles.group_id != 1:
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la que no tiene permisos')
+        return redirect('check_group_main')
+    template_name = 'prov/carga_masiva_prov.html'
+    return render(request,template_name,{'profiles':profiles})
+
+@login_required
+def import_file(request):
+    profiles = Profile.objects.get(user_id = request.user.id)
+    if profiles.group_id != 1:
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la que no tiene permisos')
+        return redirect('check_group_main')
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="archivo_importacion.xls"'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('carga_masiva')
+    row_num = 0
+    columns = ['Nombre','Apellido','Celular','Empresa','Descripcion','Correo']
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+    font_style = xlwt.XFStyle()
+    date_format = xlwt.XFStyle()
+    date_format.num_format_str = 'dd/MM/yyyy'
+    for row in range(1):
+        row_num += 1
+        for col_num in range(6):
+            if col_num == 0:
+                ws.write(row_num, col_num, 'ej: Nombre' , font_style)
+            if col_num == 1:                           
+                ws.write(row_num, col_num, 'Apellido' , font_style)
+            if col_num == 2:                           
+                ws.write(row_num, col_num, 'Celular' , font_style)
+            if col_num == 3:                           
+                ws.write(row_num, col_num, 'Empresa' , font_style)
+            if col_num == 4:                           
+                ws.write(row_num, col_num, 'Descripcion' , font_style)
+            if col_num == 5:                           
+                ws.write(row_num, col_num, 'Correo' , font_style)
+    wb.save(response)
+    return response  
+
+@login_required
+def carga_masiva_saveprov(request):
+    profiles = Profile.objects.get(user_id = request.user.id)
+    if profiles.group_id != 1:
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la que no tiene permisos')
+        return redirect('check_group_main')
+
+    if request.method == 'POST':
+        #try:
+        print(request.FILES['myfile'])
+        data = pd.read_excel(request.FILES['myfile'])
+        df = pd.DataFrame(data)
+        acc = 0
+        for item in df.itertuples():
+            #capturamos los datos desde excel
+            nombre = str(item[1])            
+            apellido = str(item[2])
+            celular = int(item[3])            
+            empresa = str(item[4])
+            descripcion = str(item[5])
+            correo = str(item[6])
+            producto_save = Proveedor(
+                nombre = nombre,            
+                apellido = apellido,
+                celular = celular,            
+                empresa = empresa,
+                descripcion = descripcion,   
+                correo = correo,      
+                )
+            producto_save.save()
+        messages.add_message(request, messages.INFO, 'Carga masiva finalizada, se importaron '+str(acc)+' registros')
+        return redirect('carga_masiva_prov')    
+#####################################
